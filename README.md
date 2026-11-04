@@ -92,3 +92,9 @@ app.py             UI chat Streamlit
 eval/              pertanyaan uji + skrip evaluasi
 data/docs/         taruh dokumen di sini
 ```
+
+## Dokumen perencanaan
+Rencana pengembangan menjadi aplikasi web (frontend + backend):
+- [`prd.md`](prd.md): masalah, persona, user stories, rilis, dan metrik
+- [`requirements.md`](requirements.md): arsitektur, kebutuhan fungsional/non-fungsional, dan kontrak API
+- [`design.md`](design.md): sistem desain hijau UNRI dengan nuansa Melayu
