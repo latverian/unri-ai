@@ -3,8 +3,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 from app import db
-from app.core import config
-from app.rag import store
+from app.core import config, mailer
+from app.rag import llm, store
 
 router = APIRouter()
 
@@ -18,6 +18,14 @@ def health():
     docs = db.one("SELECT COUNT(*) AS n FROM documents WHERE status='ready'")["n"]
     return {"status": "ok", "llm_provider": config.LLM_PROVIDER, "embed_provider": config.EMBED_PROVIDER,
             "documents": docs, "chunks": chunks}
+
+
+@router.get("/config")
+def public_config():
+    """Fitur yang aktif, untuk menyesuaikan tampilan frontend."""
+    return {"models": llm.available_models(), "general_mode": config.ALLOW_GENERAL_MODE,
+            "registration": config.ALLOW_REGISTRATION, "email_reset": mailer.enabled(),
+            "max_attachment_mb": config.MAX_ATTACHMENT_MB}
 
 
 @router.get("/suggestions")

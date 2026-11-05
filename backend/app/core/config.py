@@ -50,3 +50,20 @@ JWT_SECRET = _env("JWT_SECRET")
 JWT_HOURS = int(_env("JWT_HOURS", "8"))
 
 ALLOWED_EXTENSIONS = {".pdf", ".txt", ".md"}
+
+# --- Akun pengguna ---
+ALLOW_REGISTRATION = _env("ALLOW_REGISTRATION", "true").lower() in ("1", "true", "yes")
+USER_JWT_DAYS = int(_env("USER_JWT_DAYS", "30"))
+APP_URL = _env("APP_URL", "http://localhost:5173").rstrip("/")  # untuk tautan reset password
+SMTP_HOST = _env("SMTP_HOST")
+SMTP_PORT = int(_env("SMTP_PORT", "587"))
+SMTP_USER = _env("SMTP_USER")
+SMTP_PASSWORD = _env("SMTP_PASSWORD")
+SMTP_FROM = _env("SMTP_FROM") or SMTP_USER
+
+# --- Chat ---
+MAX_ATTACHMENT_MB = int(_env("MAX_ATTACHMENT_MB", "10"))
+MAX_ATTACHMENT_CHARS = int(_env("MAX_ATTACHMENT_CHARS", "200000"))
+ALLOW_GENERAL_MODE = _env("ALLOW_GENERAL_MODE", "true").lower() in ("1", "true", "yes")
+# Daftar model yang bisa dipilih pengguna: "provider:model=Label, ...". Kosong = pakai LLM_PROVIDER.
+LLM_MODELS = _env("LLM_MODELS")

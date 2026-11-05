@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import db
-from app.api import admin, chat, public
+from app.api import admin, attachments, auth, chat, conversations, public
 from app.core import config
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -39,5 +39,6 @@ async def validation_error(_req: Request, exc: RequestValidationError):
     return JSONResponse({"error": {"code": "VALIDATION_ERROR", "message": msg}}, status_code=422)
 
 
-for r in (public.router, chat.router, admin.router):
+for r in (public.router, chat.router, admin.router, auth.router, auth.me_router, conversations.router,
+          attachments.router):
     app.include_router(r, prefix="/api")

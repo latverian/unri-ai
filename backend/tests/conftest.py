@@ -40,7 +40,7 @@ def client():
 def fake_llm(monkeypatch):
     calls = []
 
-    def fake(system, messages):
+    def fake(system, messages, **kw):
         calls.append(messages)
         yield "Dengan IPS 3,2 kamu boleh mengambil "
         yield "maksimal 24 SKS [1]."
@@ -59,3 +59,10 @@ def token(client):
 @pytest.fixture(scope="session")
 def auth(token):
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limit():
+    from app.core import rate_limit
+    rate_limit.reset()
+    yield

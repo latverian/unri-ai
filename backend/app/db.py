@@ -26,6 +26,31 @@ CREATE TABLE IF NOT EXISTS feedback (
 CREATE TABLE IF NOT EXISTS suggestions (
     id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT NOT NULL, position INTEGER NOT NULL
 );
+-- Akun pengguna (mahasiswa). token_version naik saat ganti password => semua sesi lama tidak berlaku.
+CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, name TEXT NOT NULL, password_hash TEXT NOT NULL,
+    fakultas TEXT, disabled INTEGER NOT NULL DEFAULT 0, token_version INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL, last_login_at TEXT
+);
+CREATE TABLE IF NOT EXISTS password_resets (
+    token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires_at TEXT NOT NULL, used INTEGER NOT NULL DEFAULT 0
+);
+-- Riwayat percakapan milik akun (tersinkron antarperangkat).
+CREATE TABLE IF NOT EXISTS conversations (
+    id TEXT PRIMARY KEY, user_id TEXT NOT NULL, title TEXT NOT NULL, pinned INTEGER NOT NULL DEFAULT 0,
+    share_token TEXT UNIQUE, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_conv_user ON conversations(user_id, updated_at);
+CREATE TABLE IF NOT EXISTS chat_messages (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT NOT NULL UNIQUE, conversation_id TEXT NOT NULL,
+    role TEXT NOT NULL, content TEXT NOT NULL, sources TEXT, cited TEXT, found INTEGER, general INTEGER,
+    status TEXT, attachments TEXT, created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_msg_conv ON chat_messages(conversation_id, seq);
+CREATE TABLE IF NOT EXISTS attachments (
+    id TEXT PRIMARY KEY, user_id TEXT NOT NULL, filename TEXT NOT NULL, size_bytes INTEGER NOT NULL,
+    text TEXT NOT NULL, created_at TEXT NOT NULL
+);
 """
 
 DEFAULT_SUGGESTIONS = [

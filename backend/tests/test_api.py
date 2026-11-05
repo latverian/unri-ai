@@ -109,7 +109,7 @@ def test_llm_error_event(client, auth, monkeypatch):
     doc_id = upload(client, auth, "pedoman2.md", SAMPLE.encode())
     wait_ready(client, auth, doc_id)
 
-    def broken(system, messages):
+    def broken(system, messages, **kw):
         raise llm.LLMError("mati")
         yield  # pragma: no cover
 
@@ -136,12 +136,12 @@ def test_chunk_overlap_starts_at_word():
 def test_fallback_provider(monkeypatch):
     from app.core import config
 
-    def broken(system, messages):
+    def broken(system, messages, **kw):
         raise llm.LLMError("mati")
         yield  # pragma: no cover
 
     monkeypatch.setitem(llm.PROVIDERS, "ollama", broken)
-    monkeypatch.setitem(llm.PROVIDERS, "gemini", lambda s, m: iter(["ok"]))
+    monkeypatch.setitem(llm.PROVIDERS, "gemini", lambda s, m, **kw: iter(["ok"]))
     monkeypatch.setattr(config, "LLM_FALLBACK", "gemini")
     assert "".join(llm.stream("sys", [])) == "ok"
 
@@ -157,7 +157,7 @@ def test_check_recommendation():
 def test_refusal_without_citation_is_not_found(client, auth, monkeypatch):
     doc_id = upload(client, auth, "pedoman3.md", SAMPLE.encode())
     wait_ready(client, auth, doc_id)
-    monkeypatch.setitem(llm.PROVIDERS, "ollama", lambda s, m: iter(["Maaf, informasi UKT belum ada di dokumen."]))
+    monkeypatch.setitem(llm.PROVIDERS, "ollama", lambda s, m, **kw: iter(["Maaf, informasi UKT belum ada di dokumen."]))
     events = parse_sse(client.post("/api/chat", json={"message": "Berapa SKS maksimal kalau IPS saya 3,2?"}).text)
     done = events[-1][1]
     assert events[0][1]["sources"] and done["found"] is False and done["cited"] == []

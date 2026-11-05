@@ -144,6 +144,51 @@ def insights(date_from: str | None = None, date_to: str | None = None):
     return {"stats": {**stats, **fb}, "unanswered": unanswered, "negative": negative}
 
 
+# ---------- Pengguna ----------
+@router.get("/users", dependencies=[Depends(require_admin)])
+def list_users(q: str | None = None):
+    where, params = "", []
+    if q and q.strip():
+        where, params = "WHERE lower(u.email) LIKE ? OR lower(u.name) LIKE ?", [f"%{q.lower()}%"] * 2
+    users = db.rows(f"""SELECT u.id, u.email, u.name, u.fakultas, u.disabled, u.created_at, u.last_login_at,
+                        (SELECT COUNT(*) FROM conversations c WHERE c.user_id=u.id) AS conversations
+                        FROM users u {where} ORDER BY u.created_at DESC LIMIT 500""", params)
+    for u in users:
+        u["disabled"] = bool(u["disabled"])
+    return {"users": users, "total": db.one("SELECT COUNT(*) AS n FROM users")["n"]}
+
+
+class UserPatch(BaseModel):
+    disabled: bool
+
+
+@router.patch("/users/{user_id}", dependencies=[Depends(require_admin)])
+def update_user(user_id: str, body: UserPatch):
+    if not db.one("SELECT id FROM users WHERE id=?", (user_id,)):
+        raise err(404, "NOT_FOUND", "Pengguna tidak ditemukan.")
+    # Menonaktifkan juga mengakhiri semua sesinya.
+    db.execute("UPDATE users SET disabled=?, token_version=token_version+? WHERE id=?",
+               (int(body.disabled), int(body.disabled), user_id))
+    return {"ok": True}
+
+
+@router.post("/users/{user_id}/reset-link", dependencies=[Depends(require_admin)])
+def user_reset_link(user_id: str):
+    from app.api.auth import RESET_HOURS, create_reset_link
+    if not db.one("SELECT id FROM users WHERE id=?", (user_id,)):
+        raise err(404, "NOT_FOUND", "Pengguna tidak ditemukan.")
+    return {"link": create_reset_link(user_id), "expires_hours": RESET_HOURS}
+
+
+@router.delete("/users/{user_id}", dependencies=[Depends(require_admin)])
+def delete_user(user_id: str):
+    from app.api.auth import delete_user_data
+    if not db.one("SELECT id FROM users WHERE id=?", (user_id,)):
+        raise err(404, "NOT_FOUND", "Pengguna tidak ditemukan.")
+    delete_user_data(user_id)
+    return {"ok": True}
+
+
 # ---------- Contoh pertanyaan ----------
 class SuggestionsIn(BaseModel):
     suggestions: list[str] = Field(min_length=1, max_length=12)
