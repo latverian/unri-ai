@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Token warna (lihat spec/design.md §2). Nilai berupa kanal RGB agar bisa dipakai dengan opasitas Tailwind. */
+:root {
+  --bg: 251 247 238;  --surface: 255 255 255;  --surface-2: 244 239 227;
+  --primary: 11 93 59;  --primary-strong: 7 59 38;  --primary-hover: 31 138 91;  --primary-soft: 220 239 228;
+  --on-primary: 255 255 255;
+  --emas: 201 162 39;  --emas-teks: 122 92 10;  --emas-soft: 246 235 200;
+  --teks: 27 38 32;  --teks-2: 74 90 81;  --garis: 228 222 207;
+  --error: 180 35 24;  --error-soft: 254 228 226;
+  color-scheme: light;
+}
+/* Mode gelap: "Malam di Sungai Siak" */
+:root[data-theme="dark"] {
+  --bg: 14 23 18;  --surface: 22 35 28;  --surface-2: 30 47 37;
+  --primary: 63 191 127;  --primary-strong: 168 230 198;  --primary-hover: 95 214 154;  --primary-soft: 30 58 43;
+  --on-primary: 4 26 16;
+  --emas: 227 190 79;  --emas-teks: 227 190 79;  --emas-soft: 58 50 24;
+  --teks: 232 239 233;  --teks-2: 167 184 173;  --garis: 42 59 49;
+  --error: 249 112 102;  --error-soft: 59 23 20;
+  color-scheme: dark;
+}
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body { @apply bg-bg font-sans text-teks antialiased; }
+  :focus-visible { outline: 2px solid rgb(var(--primary-hover)); outline-offset: 2px; border-radius: 6px; }
+  ::selection { background: rgb(var(--emas-soft)); }
+}
+
+@layer components {
+  .btn { @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-sm px-4 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:min-h-[40px]; }
+  .btn-primary { @apply btn bg-primary text-onprimary hover:bg-primary-hover; }
+  .btn-secondary { @apply btn border border-garis bg-surface text-teks hover:bg-surface2; }
+  .btn-icon { @apply inline-flex h-11 w-11 items-center justify-center rounded-sm text-teks-2 transition-colors hover:bg-surface2 hover:text-teks md:h-9 md:w-9; }
+  .card { @apply rounded border border-garis bg-surface shadow-card; }
+  .label-caps { @apply font-mono text-[11px] font-medium uppercase tracking-[0.08em]; }
+  .input { @apply w-full rounded-sm border border-garis bg-surface px-3 py-2.5 text-teks placeholder:text-teks-2/70 focus:border-primary-hover focus:outline-none; }
+
+  /* Isi jawaban Markdown */
+  .prose-jawaban { @apply max-w-prose text-[16px] leading-[26px]; }
+  .prose-jawaban > * + * { @apply mt-3; }
+  .prose-jawaban strong { @apply font-semibold text-primary-strong; }
+  .prose-jawaban ul { @apply list-disc space-y-1 pl-5; }
+  .prose-jawaban ol { @apply list-decimal space-y-1 pl-5; }
+  .prose-jawaban a:not(.cite) { @apply text-primary underline underline-offset-2; }
+  .prose-jawaban table { @apply block w-full overflow-x-auto border-collapse text-sm; }
+  .prose-jawaban th { @apply border-b border-garis bg-surface2 px-3 py-2 text-left font-semibold; }
+  .prose-jawaban td { @apply border-b border-garis px-3 py-2; }
+  .prose-jawaban code { @apply rounded bg-surface2 px-1 font-mono text-[13px]; }
+  .prose-jawaban h1, .prose-jawaban h2, .prose-jawaban h3 { @apply font-semibold text-primary-strong; }
+}
+
+/* Pola latar sambutan: titik emas & hijau, memudar ke bawah (design.md §4.2) */
+.pola-balai {
+  background-image: radial-gradient(rgb(var(--emas) / .55) 0.8px, transparent 0.8px),
+    radial-gradient(rgb(var(--primary) / .35) 0.8px, transparent 0.8px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000, transparent 85%);
+  opacity: .35;
+}
+
+.kursor::after { content: "▍"; color: rgb(var(--emas)); animation: kedip 1s steps(1) infinite; margin-left: 1px; }
+@keyframes kedip { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

@@ -40,10 +40,10 @@ Pipeline RAG ditempatkan di modul tersendiri (`backend/app/rag/`) supaya bisa di
 | Ikon | `lucide-react` | Gratis, gaya garis yang bersih |
 | Backend | **FastAPI** + Uvicorn | Async, mendukung streaming, dokumentasi otomatis di `/docs` |
 | Vector DB | Chroma | Lokal, berbasis file |
-| Database metadata | **SQLite** via SQLModel | Tanpa server; cukup untuk skala project |
+| Database metadata | **SQLite** (`sqlite3` bawaan Python) | Tanpa server; cukup untuk skala project |
 | Embedding | `intfloat/multilingual-e5-small` | Lokal, bagus untuk bahasa Indonesia |
 | LLM | Ollama (`qwen2.5:3b`) / Gemini free tier | Gratis |
-| Auth admin | JWT (`python-jose`) + password di-hash (`passlib[bcrypt]`) | Sederhana |
+| Auth admin | JWT (`PyJWT`) + password di-hash (`bcrypt`) | Sederhana |
 | Deploy (opsional) | Frontend: Vercel/Netlify · Backend: Hugging Face Spaces (Docker) | Free tier |
 
 ## 3. Struktur Repo (target)

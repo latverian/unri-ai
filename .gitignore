@@ -12,8 +12,7 @@ __pycache__/
 node_modules/
 dist/
 
-# Data lokal
-backend/data/chroma/
-backend/data/*.db
+# Data lokal (dokumen unggahan, vektor, database)
+backend/data/
 
 .DS_Store

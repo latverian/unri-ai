@@ -1,0 +1,146 @@
+import json
+import time
+
+from app.rag import ingest, llm
+from tests.conftest import SAMPLE
+
+
+def parse_sse(text: str) -> list[tuple[str, dict]]:
+    out = []
+    for block in text.strip().split("\n\n"):
+        lines = dict(line.split(": ", 1) for line in block.splitlines())
+        out.append((lines["event"], json.loads(lines["data"])))
+    return out
+
+
+def wait_ready(client, auth, doc_id, timeout=10):
+    end = time.time() + timeout
+    while time.time() < end:
+        docs = {d["id"]: d for d in client.get("/api/admin/documents", headers=auth).json()["documents"]}
+        if docs[doc_id]["status"] in ("ready", "failed"):
+            return docs[doc_id]
+        time.sleep(0.1)
+    raise AssertionError("ingest tidak selesai")
+
+
+def upload(client, auth, name, content, mime="text/markdown"):
+    r = client.post("/api/admin/documents", headers=auth, files=[("files", (name, content, mime))])
+    assert r.status_code == 202, r.text
+    return r.json()["doc_ids"][0]
+
+
+# ---------- publik ----------
+def test_health_and_suggestions(client):
+    assert client.get("/api/health").json()["status"] == "ok"
+    s = client.get("/api/suggestions").json()["suggestions"]
+    assert 4 <= len(s) <= 12
+
+
+def test_chat_without_documents_says_not_found(client, fake_llm):
+    events = parse_sse(client.post("/api/chat", json={"message": "Jam berapa kantin buka?"}).text)
+    names = [e for e, _ in events]
+    assert names[0] == "sources" and names[-1] == "done"
+    assert events[-1][1]["found"] is False
+    assert fake_llm == []  # LLM tidak dipanggil
+
+
+def test_chat_validation(client):
+    r = client.post("/api/chat", json={"message": "   "})
+    assert r.status_code == 422 and r.json()["error"]["code"] == "VALIDATION_ERROR"
+    r = client.post("/api/chat", json={"message": "a" * 1001})
+    assert r.status_code == 422
+
+
+# ---------- admin ----------
+def test_admin_requires_login(client):
+    assert client.get("/api/admin/documents").status_code == 401
+    r = client.post("/api/admin/login", json={"username": "admin", "password": "salah"})
+    assert r.status_code == 401 and r.json()["error"]["code"] == "INVALID_CREDENTIALS"
+
+
+def test_upload_rejects_bad_files(client, auth):
+    r = client.post("/api/admin/documents", headers=auth, files=[("files", ("x.exe", b"MZ", "application/octet-stream"))])
+    assert r.status_code == 400
+    r = client.post("/api/admin/documents", headers=auth, files=[("files", ("palsu.pdf", b"bukan pdf", "application/pdf"))])
+    assert r.status_code == 400
+
+
+def test_full_flow_upload_chat_feedback_delete(client, auth, fake_llm):
+    doc_id = upload(client, auth, "pedoman.md", SAMPLE.encode())
+    doc = wait_ready(client, auth, doc_id)
+    assert doc["status"] == "ready" and doc["chunks"] >= 1
+
+    r = client.post("/api/chat", json={
+        "message": "Berapa SKS maksimal kalau IPS saya 3,2?",
+        "history": [{"role": "user", "content": "halo"}, {"role": "assistant", "content": "Halo!"}],
+        "conversation_id": "c_test"})
+    events = parse_sse(r.text)
+    sources = events[0][1]["sources"]
+    assert sources and sources[0]["source"] == "pedoman.md" and sources[0]["doc_id"] == doc_id
+    text = "".join(d["t"] for e, d in events if e == "token")
+    assert "24 SKS" in text
+    done = events[-1][1]
+    assert done["found"] is True
+    # riwayat ikut terkirim ke LLM, pertanyaan terakhir berisi KONTEKS
+    assert fake_llm[0][0]["content"] == "halo" and "KONTEKS" in fake_llm[0][-1]["content"]
+
+    assert client.post("/api/feedback", json={"message_id": done["message_id"], "rating": -1,
+                                              "comment": "kurang lengkap"}).status_code == 201
+    assert client.post("/api/feedback", json={"message_id": "m_tidakada", "rating": 1}).status_code == 404
+
+    ins = client.get("/api/admin/insights", headers=auth).json()
+    assert ins["stats"]["total"] >= 2 and ins["stats"]["down"] == 1
+    assert any(n["comment"] == "kurang lengkap" for n in ins["negative"])
+    assert any("kantin" in u["question"] for u in ins["unanswered"])
+
+    assert client.delete(f"/api/admin/documents/{doc_id}", headers=auth).status_code == 200
+    events = parse_sse(client.post("/api/chat", json={"message": "Berapa SKS maksimal kalau IPS 3,2?"}).text)
+    assert events[0][1]["sources"] == []
+
+
+def test_scanned_pdf_like_file_fails_gracefully(client, auth):
+    doc_id = upload(client, auth, "kosong.txt", b"   \n\n  ", "text/plain")
+    doc = wait_ready(client, auth, doc_id)
+    assert doc["status"] == "failed" and "OCR" in doc["error"]
+    assert client.post(f"/api/admin/documents/{doc_id}/reindex", headers=auth).status_code == 202
+
+
+def test_llm_error_event(client, auth, monkeypatch):
+    doc_id = upload(client, auth, "pedoman2.md", SAMPLE.encode())
+    wait_ready(client, auth, doc_id)
+
+    def broken(system, messages):
+        raise llm.LLMError("mati")
+        yield  # pragma: no cover
+
+    monkeypatch.setitem(llm.PROVIDERS, "ollama", broken)
+    events = parse_sse(client.post("/api/chat", json={"message": "Berapa SKS maksimal IPS 3,2?"}).text)
+    assert events[-1][0] == "error" and events[-1][1]["code"] == "LLM_UNAVAILABLE"
+    client.delete(f"/api/admin/documents/{doc_id}", headers=auth)
+
+
+def test_update_suggestions(client, auth):
+    r = client.put("/api/admin/suggestions", headers=auth, json={"suggestions": ["A?", " ", "B?"]})
+    assert r.json()["suggestions"] == ["A?", "B?"]
+    assert client.get("/api/suggestions").json()["suggestions"] == ["A?", "B?"]
+
+
+# ---------- unit ----------
+def test_chunk_overlap_starts_at_word():
+    text = "\n\n".join(f"Paragraf {i} " + "kata " * 60 for i in range(6))
+    chunks = ingest.chunk(text, size=400, overlap=80)
+    assert len(chunks) > 1 and all(len(c) <= 400 + 80 + 2 for c in chunks)
+    assert all(not c[0].isspace() for c in chunks)
+
+
+def test_fallback_provider(monkeypatch):
+    from app.core import config
+
+    def broken(system, messages):
+        raise llm.LLMError("mati")
+        yield  # pragma: no cover
+
+    monkeypatch.setitem(llm.PROVIDERS, "ollama", broken)
+    monkeypatch.setitem(llm.PROVIDERS, "gemini", lambda s, m: iter(["ok"]))
+    monkeypatch.setattr(config, "LLM_FALLBACK", "gemini")
+    assert "".join(llm.stream("sys", [])) == "ok"

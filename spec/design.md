@@ -109,7 +109,7 @@ Di `tailwind.config.ts`, petakan token ini, misalnya `colors: { primary: 'var(--
 
 | Peran | Font | Alasan |
 |---|---|---|
-| **Judul / display** | **Lora** (serif, 600) | Lekuk kaligrafis yang hangat dan berwibawa, cocok dengan nuansa naskah Melayu |
+| **Judul / display** | **Noto Serif** (serif, 600) | Serif klasik yang berwibawa, cocok dengan nuansa naskah Melayu (mengikuti desain Stitch) |
 | **Teks / UI** | **Plus Jakarta Sans** (400, 500, 600) | Dirancang di Indonesia, sangat terbaca di layar kecil |
 | **Kode / angka teknis** | JetBrains Mono | Untuk kode mata kuliah atau nomor surat |
 
@@ -117,8 +117,8 @@ Keduanya tersedia gratis di Google Fonts. Gunakan `font-display: swap`.
 
 | Token | Ukuran / tinggi baris | Pemakaian |
 |---|---|---|
-| `display` | 32 / 40 (HP: 26 / 34), Lora | Judul layar sambutan |
-| `h1` | 24 / 32, Lora | Judul halaman admin |
+| `display` | 32 / 40 (HP: 26 / 34), Noto Serif | Judul layar sambutan |
+| `h1` | 24 / 32, Noto Serif | Judul halaman admin |
 | `h2` | 18 / 26, Plus Jakarta 600 | Judul bagian, judul kartu |
 | `body` | 16 / 26, Plus Jakarta 400 | **Isi jawaban**: jangan lebih kecil dari ini |
 | `small` | 14 / 20 | Keterangan, kartu sumber |
@@ -157,7 +157,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
 
 ## 6. Logo dan Avatar Asisten
 - **Ikon:** dua garis bersilang seperti **selembayung** yang membentuk huruf "U" atau "V" terbuka, dengan titik emas di puncaknya (melambangkan ilmu atau cahaya). Bentuk geometris sederhana supaya tetap jelas di ukuran 24 px.
-- **Wordmark:** "UNRI" (Lora 600, `--primary-strong`) + "GPT" (Plus Jakarta 600, `--emas-teks`).
+- **Wordmark:** "UNRI" (Noto Serif 600, `--primary-strong`) + "GPT" (Plus Jakarta 600, `--emas-teks`).
 - **Avatar asisten** di bubble: ikon selembayung putih di lingkaran `--primary`, 32 px.
 - Simpan sebagai SVG di `frontend/public/logo.svg` dan buat favicon dari ikon yang sama.
 
@@ -230,7 +230,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
    ─ ▲▲▲▲ ─  Dari Pekanbaru ke Bengkalis,
              singgah sebentar membeli kopi;
              tanyalah apa yang ingin ditulis,
-             UNRI GPT siap menemani.          (Lora italic, --teks-2)
+             UNRI GPT siap menemani.          (Noto Serif italic, --teks-2)
 ```
 
 ### 7.4 Grid dan jarak
@@ -306,7 +306,7 @@ Nada: **sopan, hangat, dan ringkas**, seperti kakak tingkat yang santun. Memakai
 | Setelah 👎 | *Terima kasih, masukanmu membantu kami memperbaiki jawaban.* |
 
 ### Pantun (sentuhan budaya)
-Ditampilkan acak di layar sambutan atau state kosong, dengan Lora italic dan warna `--teks-2`. Pantun ini karya asli untuk proyek ini.
+Ditampilkan acak di layar sambutan atau state kosong, dengan Noto Serif italic dan warna `--teks-2`. Pantun ini karya asli untuk proyek ini.
 
 > **Sambutan**
 > Dari Pekanbaru ke Bengkalis,
@@ -345,7 +345,7 @@ Pantun **tidak** menggantikan pesan fungsional. Pesan jelas tetap tampil di atas
 
 ## 13. Checklist Serah-Terima Desain → Kode
 - [ ] Token warna (§2.4) di `frontend/src/styles/tokens.css` dan dipetakan di Tailwind
-- [ ] Font Lora + Plus Jakarta Sans dimuat dari Google Fonts
+- [ ] Font Noto Serif + Plus Jakarta Sans dimuat dari Google Fonts
 - [ ] `logo.svg`, favicon, dan komponen `<PucukRebung />`
 - [ ] Komponen: `ChatBubble`, `SourceCard`, `CitationChip`, `TypingIndicator`, `Composer`, `SuggestionChip`, `Sidebar`, `Toast`, `StatusBadge`
 - [ ] Layar: Sambutan, Chat, Admin Login, Admin Dokumen, Admin Insights

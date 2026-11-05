@@ -1,0 +1,3 @@
+# Embedding lokal (EMBED_PROVIDER=local). Ukurannya besar (PyTorch), lewati jika memakai EMBED_PROVIDER=gemini.
+-r requirements.txt
+sentence-transformers>=3.0
