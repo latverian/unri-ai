@@ -8,16 +8,30 @@ Asisten tanya-jawab akademik berbasis dokumen, dengan **studi kasus Universitas 
 
 ## Fitur
 
-**Untuk mahasiswa**
-- Chat dengan jawaban *streaming*, sitasi `[1]` yang bisa diklik, dan kartu sumber (nama dokumen, halaman, cuplikan)
-- Penolakan jujur jika informasi tidak ada di dokumen (LLM tidak dipanggil sama sekali)
-- Contoh pertanyaan di layar awal, pertanyaan lanjutan, tombol berhenti, salin, ulangi, dan 👍/👎
-- Riwayat percakapan tersimpan di browser (tanpa akun)
-- Mode terang dan gelap, nyaman dipakai di HP
+**Chat**
+- Jawaban *streaming*, sitasi `[1]` yang bisa diklik, dan kartu sumber (nama dokumen, halaman, cuplikan)
+- Penolakan jujur jika informasi tidak ada di dokumen. Di mode **Dokumen**, LLM tidak dipanggil sama sekali
+- Mode **Umum** (opsional): pertanyaan umum seperti "apa itu IPK" tetap dijawab, dengan label jelas "bukan dari dokumen UNRI"
+- **Lampirkan PDF/TXT/MD** ke percakapan dan tanyakan isinya (akun)
+- **Edit pertanyaan** lalu kirim ulang, **ulangi** jawaban, **berhenti**, salin, 👍/👎 dengan komentar
+- **Pilih model AI** (diatur lewat `LLM_MODELS`), **input suara**, **bacakan jawaban**, tombol salin pada blok kode
+- Pintasan keyboard: Ctrl/⌘+K cari, Ctrl/⌘+Shift+O percakapan baru, Esc berhenti
+
+**Akun (opsional, gratis)**
+- Daftar, masuk, lupa/reset kata sandi, edit profil dan fakultas, ganti kata sandi, keluar dari semua perangkat, hapus akun
+- Riwayat **tersinkron antarperangkat**: cari (judul dan isi), ganti nama, sematkan, hapus, ekspor ke Markdown
+- **Bagikan** percakapan lewat tautan baca-saja (tanpa nama/email), bisa dicabut kapan saja
+- Riwayat dari mode tamu bisa dipindahkan ke akun saat pertama login
+- Tanpa akun tetap bisa bertanya; riwayat tersimpan di browser
+
+**Tampilan**
+- Tema terang, gelap, atau mengikuti perangkat; ukuran teks jawaban; ornamen pucuk rebung dan pantun bisa dimatikan
+- Nyaman dipakai di HP, dan mengikuti standar aksesibilitas (keyboard, pembaca layar, kontras)
 
 **Untuk admin** (`/admin`)
-- Login, unggah dokumen PDF/TXT/MD (*drag-and-drop*), status pemrosesan, proses ulang, hapus
+- Unggah dokumen PDF/TXT/MD (*drag-and-drop*), status pemrosesan, proses ulang, hapus
 - *Insights*: pertanyaan yang tidak terjawab, jawaban yang dinilai kurang, dan pengaturan contoh pertanyaan
+- **Pengguna**: cari, nonaktifkan/aktifkan, buat tautan reset kata sandi, hapus akun
 
 ## Teknologi (semuanya gratis)
 

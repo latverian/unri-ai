@@ -2,10 +2,11 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 
 export type ThemePref = "light" | "dark" | "system";
 export type TextSize = "normal" | "sedang" | "besar";
-export type Prefs = { theme: ThemePref; textSize: TextSize; ornamen: boolean; pantun: boolean };
+export type AnswerMode = "dokumen" | "umum";
+export type Prefs = { theme: ThemePref; textSize: TextSize; ornamen: boolean; pantun: boolean; mode: AnswerMode; model: string | null; autoSpeak: boolean };
 
 const KEY = "unri-prefs";
-const DEFAULTS: Prefs = { theme: "system", textSize: "normal", ornamen: true, pantun: true };
+const DEFAULTS: Prefs = { theme: "system", textSize: "normal", ornamen: true, pantun: true, mode: "dokumen", model: null, autoSpeak: false };
 export const TEXT_SIZES: Record<TextSize, { px: number; label: string }> = {
   normal: { px: 16, label: "Normal" },
   sedang: { px: 18, label: "Sedang" },

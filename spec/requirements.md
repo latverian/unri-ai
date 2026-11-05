@@ -247,3 +247,36 @@ Frontend: `VITE_API_URL=http://localhost:8000`.
 | 2 | SQLite, feedback, rate limit, refaktor ingest per dokumen | Parser SSE, kartu sumber, layar sambutan, state kosong dan error |
 | 3 | Admin: login JWT, unggah, hapus, background ingest | Halaman admin: login, tabel dokumen, unggah *drag-and-drop* |
 | 4 | Tes, Dockerfile, deploy | Riwayat chat, responsif, aksesibilitas, uji pengguna |
+
+
+## 12. Tambahan Rilis 2: Akun & Fitur Chat Lengkap
+
+Diimplementasikan setelah MVP atas permintaan pemilik proyek (US-07 s.d. US-12 di PRD, ditambah akun pengguna).
+
+### Endpoint baru
+| Method | Endpoint | Fungsi |
+|---|---|---|
+| `GET` | `/api/config` | Fitur aktif untuk frontend: daftar model, mode Umum, pendaftaran, email reset, batas lampiran |
+| `POST` | `/api/auth/register` · `/api/auth/login` | Buat akun / masuk → `{access_token, user}` (JWT peran `user`, 30 hari) |
+| `POST` | `/api/auth/forgot` · `/api/auth/reset` | Tautan reset sekali pakai (1 jam) via email bila SMTP diatur |
+| `GET/PATCH` | `/api/me` | Profil (nama, fakultas) |
+| `POST` | `/api/me/password` · `/api/me/logout-all` · `/api/me/delete` | Ganti kata sandi (sesi lain berakhir), keluar dari semua perangkat, hapus akun beserta datanya |
+| `GET` | `/api/conversations?q=` | Daftar/cari percakapan (judul dan isi) |
+| `GET/PATCH/DELETE` | `/api/conversations/{id}` | Baca, ganti nama/sematkan, hapus |
+| `DELETE` | `/api/conversations` | Hapus semua riwayat akun |
+| `POST/DELETE` | `/api/conversations/{id}/share` | Buat / cabut tautan berbagi |
+| `GET` | `/api/shared/{token}` | Tampilan baca-saja tanpa identitas pemilik |
+| `POST` | `/api/conversations/import` | Pindahkan riwayat tamu ke akun |
+| `POST` | `/api/attachments` | Lampiran chat (PDF/TXT/MD, maks. `MAX_ATTACHMENT_MB`) |
+| `GET/PATCH/DELETE` | `/api/admin/users[/{id}]` | Kelola pengguna; `POST /api/admin/users/{id}/reset-link` membuat tautan reset |
+
+### Perubahan `POST /api/chat`
+Field opsional baru: `mode` (`dokumen` \| `umum`), `model` (id dari `/api/config`), `attachment_ids` (maks. 5), `replace_from` (id pesan pengguna yang diedit/diulang; pesan sesudahnya dihapus). Jika ada header `Authorization` pengguna dan `conversation_id`, percakapan disimpan di server. Event baru `mode` (`{"general": true}`), dan `done` kini memuat `user_message_id`, `general`, `conversation_id`, `title`.
+
+Aturan penting:
+- Mode Umum hanya dipakai bila **tidak ada** dokumen relevan, memakai prompt yang melarang menyebut aturan atau angka spesifik kampus, dan jawabannya diberi label di UI serta tetap tercatat sebagai "tidak terjawab" di Insights.
+- Lampiran hanya bisa dipakai pemiliknya; potongan lampiran tidak memakai ambang `MIN_SCORE` karena dipilih sendiri oleh pengguna.
+- Batas percobaan: 10 permintaan per menit per IP untuk endpoint akun.
+
+### Tabel baru
+`users`, `password_resets` (token disimpan sebagai hash SHA-256), `conversations`, `chat_messages`, `attachments`.

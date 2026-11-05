@@ -1,14 +1,17 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Download, Info, MonitorSmartphone, Moon, Palette, ShieldCheck, Sparkles, Sun, Trash2, Type } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Download, Info, Keyboard, MonitorSmartphone, Moon, Palette, ShieldCheck, Sparkles, Sun, Trash2, Type, UserRound, Volume2 } from "lucide-react";
 import { api } from "../lib/api";
 import { TEXT_SIZES, usePrefs, type TextSize, type ThemePref } from "../lib/prefs";
+import { useSession } from "../lib/session";
 import { clearConversations, loadConversations } from "../lib/storage";
+import { AccountSection } from "./AccountSection";
 import { LogoMark, PucukRebung } from "../components/Brand";
 import { AccountMenu } from "../components/AccountMenu";
 import { useToast } from "../components/Toast";
 
-type Tab = "tampilan" | "privasi" | "info";
+type Tab = "akun" | "tampilan" | "privasi" | "info";
+const TABS: Tab[] = ["akun", "tampilan", "privasi", "info"];
 
 function Switch({ checked, onChange, label, desc }: { checked: boolean; onChange: (v: boolean) => void; label: string; desc: string }) {
   return (
@@ -41,29 +44,44 @@ const THEMES: { key: ThemePref; name: string; desc: string; icon: ReactNode; pre
 export default function SettingsPage() {
   const { prefs, set } = usePrefs();
   const toast = useToast();
-  const [tab, setTab] = useState<Tab>("tampilan");
-  const [count, setCount] = useState(() => loadConversations().length);
+  const { user } = useSession();
+  const [params, setParams] = useSearchParams();
+  const tab: Tab = TABS.includes(params.get("tab") as Tab) ? (params.get("tab") as Tab) : "tampilan";
+  const setTab = (t: Tab) => setParams({ tab: t }, { replace: true });
+  const [count, setCount] = useState<number | null>(() => (user ? null : loadConversations().length));
+  useEffect(() => {
+    if (user && tab === "privasi") api.conversations().then((r) => setCount(r.conversations.length)).catch(() => setCount(0));
+  }, [user, tab]);
   const [health, setHealth] = useState<Awaited<ReturnType<typeof api.health>> | null | "error">(null);
 
   useEffect(() => {
     if (tab === "info" && health === null) api.health().then(setHealth).catch(() => setHealth("error"));
   }, [tab, health]);
 
-  const exportHistory = () => {
-    const data = JSON.stringify(loadConversations(), null, 2);
+  const exportHistory = async () => {
+    let list: unknown = loadConversations();
+    if (user) {
+      const { conversations } = await api.conversations();
+      list = await Promise.all(conversations.map(async (c) => ({ ...c, messages: (await api.conversation(c.id)).messages })));
+    }
+    const data = JSON.stringify(list, null, 2);
     const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
     const a = Object.assign(document.createElement("a"), { href: url, download: `riwayat-balai-ilmu-${new Date().toISOString().slice(0, 10)}.json` });
     a.click();
     URL.revokeObjectURL(url);
   };
-  const clearHistory = () => {
-    if (!confirm("Hapus semua riwayat percakapan di perangkat ini? Tindakan ini tidak bisa dibatalkan.")) return;
-    clearConversations();
-    setCount(0);
-    toast("Riwayat dihapus");
+  const clearHistory = async () => {
+    if (!confirm(user ? "Hapus semua riwayat percakapan di akunmu (di semua perangkat)? Tindakan ini tidak bisa dibatalkan."
+      : "Hapus semua riwayat percakapan di perangkat ini? Tindakan ini tidak bisa dibatalkan.")) return;
+    try {
+      if (user) await api.deleteAllConversations(); else clearConversations();
+      setCount(0);
+      toast("Riwayat dihapus");
+    } catch (e) { toast((e as Error).message, "error"); }
   };
 
   const tabs: { key: Tab; label: string; icon: ReactNode }[] = [
+    { key: "akun", label: "Akun", icon: <UserRound size={16} /> },
     { key: "tampilan", label: "Tampilan", icon: <Palette size={16} /> },
     { key: "privasi", label: "Riwayat & Privasi", icon: <ShieldCheck size={16} /> },
     { key: "info", label: "Informasi Sistem", icon: <Info size={16} /> },
@@ -96,6 +114,8 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+
+        {tab === "akun" && <div role="tabpanel"><AccountSection /></div>}
 
         {tab === "tampilan" && (
           <div role="tabpanel" className="space-y-5">
@@ -133,6 +153,10 @@ export default function SettingsPage() {
                 <Switch checked={prefs.ornamen} onChange={(v) => set({ ornamen: v })} label="Ornamen pucuk rebung" desc="Garis motif songket dan pola latar." />
                 <Switch checked={prefs.pantun} onChange={(v) => set({ pantun: v })} label="Pantun" desc="Pantun di layar sambutan dan saat menunggu." />
               </Section>
+
+              <Section title="Suara" icon={<Volume2 size={20} />} desc="Memakai suara bawaan perangkat (bahasa Indonesia bila tersedia).">
+                <Switch checked={prefs.autoSpeak} onChange={(v) => set({ autoSpeak: v })} label="Bacakan jawaban otomatis" desc="Setiap jawaban baru langsung dibacakan." />
+              </Section>
             </div>
           </div>
         )}
@@ -140,8 +164,9 @@ export default function SettingsPage() {
         {tab === "privasi" && (
           <div role="tabpanel" className="space-y-5">
             <Section title="Riwayat percakapan" icon={<ShieldCheck size={20} />}
-              desc="Balai Ilmu tidak memakai akun. Riwayat chat hanya tersimpan di browser perangkat ini dan tidak dikirim ke mana pun.">
-              <p className="mb-3"><span className="font-serif text-3xl font-semibold">{count}</span> <span className="text-teks-2">percakapan tersimpan</span></p>
+              desc={user ? "Riwayat tersimpan di akunmu dan tersinkron di semua perangkat. Hanya kamu yang bisa melihatnya, kecuali percakapan yang kamu bagikan."
+                : "Kamu memakai Balai Ilmu tanpa akun. Riwayat chat hanya tersimpan di browser perangkat ini dan tidak dikirim ke mana pun."}>
+              <p className="mb-3"><span className="font-serif text-3xl font-semibold">{count ?? "…"}</span> <span className="text-teks-2">percakapan tersimpan</span></p>
               <div className="flex flex-wrap gap-2">
                 <button className="btn-secondary" disabled={!count} onClick={exportHistory}><Download size={16} /> Unduh riwayat (JSON)</button>
                 <button className="btn-secondary hover:bg-error-soft hover:text-error" disabled={!count} onClick={clearHistory}><Trash2 size={16} /> Hapus semua riwayat</button>
@@ -150,6 +175,7 @@ export default function SettingsPage() {
             <Section title="Data yang dikirim ke server" icon={<Info size={20} />}>
               <ul className="list-disc space-y-1 pl-5 text-sm text-teks-2">
                 <li>Pertanyaan dan beberapa pesan sebelumnya, untuk menyusun jawaban.</li>
+                {user && <li>Riwayat percakapan dan lampiran yang kamu unggah disimpan di akunmu sampai kamu menghapusnya.</li>}
                 <li>Pertanyaan dicatat tanpa identitas atau alamat IP, dan dihapus otomatis setelah 90 hari.</li>
                 <li>Penilaian 👍/👎 dan komentarmu, untuk memperbaiki kualitas jawaban.</li>
                 <li>Jangan menulis data pribadi seperti NIM, nilai, atau nomor HP di kolom tanya.</li>
@@ -183,6 +209,18 @@ export default function SettingsPage() {
                 Jawaban disusun dari dokumen rujukan; selalu konfirmasi ke bagian akademik untuk keputusan penting.
               </p>
             </Section>
+            <div className="mt-5">
+              <Section title="Pintasan keyboard" icon={<Keyboard size={20} />}>
+                <dl className="grid gap-2 text-sm sm:grid-cols-2">
+                  {[["Ctrl/⌘ + K", "Cari percakapan"], ["Ctrl/⌘ + Shift + O", "Percakapan baru"], ["Enter", "Kirim pertanyaan"],
+                    ["Shift + Enter", "Baris baru"], ["Esc", "Hentikan jawaban"]].map(([k, v]) => (
+                    <div key={k} className="flex items-center justify-between gap-3 rounded-sm border border-garis px-3 py-2">
+                      <dt>{v}</dt><dd><kbd className="rounded border border-garis bg-surface2 px-1.5 py-0.5 font-mono text-xs">{k}</kbd></dd>
+                    </div>
+                  ))}
+                </dl>
+              </Section>
+            </div>
           </div>
         )}
       </main>

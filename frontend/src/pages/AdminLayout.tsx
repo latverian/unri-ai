@@ -1,5 +1,5 @@
 import { Navigate, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, FileStack, LogOut, MessageSquare, Moon, Sun } from "lucide-react";
+import { BarChart3, FileStack, LogOut, MessageSquare, Moon, Sun, Users } from "lucide-react";
 import { auth } from "../lib/api";
 import { useTheme } from "../lib/theme";
 import { LogoMark, PucukRebung } from "../components/Brand";
@@ -24,6 +24,7 @@ export default function AdminLayout() {
           <nav className="flex items-center gap-1" aria-label="Menu admin">
             <NavLink to="/admin" end className={link}><FileStack size={18} /> <span className="hidden sm:inline">Dokumen</span></NavLink>
             <NavLink to="/admin/insights" className={link}><BarChart3 size={18} /> <span className="hidden sm:inline">Insights</span></NavLink>
+            <NavLink to="/admin/pengguna" className={link}><Users size={18} /> <span className="hidden sm:inline">Pengguna</span></NavLink>
             <NavLink to="/" className={link}><MessageSquare size={18} /> <span className="hidden sm:inline">Chat</span></NavLink>
           </nav>
           <div className="ml-auto flex items-center gap-1">
