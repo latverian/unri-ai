@@ -126,12 +126,14 @@ def try_llm(provider: str) -> bool:
     if fn is None:
         print(f"  {FAIL} Provider tidak dikenal: {provider}")
         return False
+    # Uji model pertama milik provider ini di LLM_MODELS (kalau ada), selain itu model default-nya.
+    mdl = next((m["model"] for m in llm.available_models() if m["provider"] == provider), None)
     t0 = time.monotonic()
     first = None
     text = ""
     try:
         for tok in fn("Jawab singkat dalam satu kalimat bahasa Indonesia.",
-                      [{"role": "user", "content": "Apa kepanjangan SKS dalam perkuliahan?"}]):
+                      [{"role": "user", "content": "Apa kepanjangan SKS dalam perkuliahan?"}], model=mdl):
             first = first or time.monotonic()
             text += tok
     except llm.LLMError as e:
@@ -145,7 +147,8 @@ def try_llm(provider: str) -> bool:
                   "dengan nama model yang disarankan pada pesan di atas.")
         return False
     total = time.monotonic() - t0
-    print(f"  {OK} {provider} menjawab dalam {total:.1f} dtk (token pertama {first - t0:.1f} dtk):")
+    name = f"{provider} ({mdl})" if mdl else provider
+    print(f"  {OK} {name} menjawab dalam {total:.1f} dtk (token pertama {first - t0:.1f} dtk):")
     print(f"      “{' '.join(text.split())[:160]}”")
     return True
 
@@ -194,6 +197,11 @@ def main() -> int:
                 else:
                     print(f"  {WARN} Model {config.OLLAMA_MODEL} belum ada. Jalankan: ollama pull {config.OLLAMA_MODEL}"
                           "  (atau: python -m app.check --pull)")
+    if "openai" in used or any(m["provider"] == "openai" for m in llm.available_models()):
+        print("\n== Router (format OpenAI) ==")
+        print(f"  {OK if config.OPENAI_API_KEY else WARN} {config.OPENAI_BASE_URL} · "
+              f"API key {'terisi' if config.OPENAI_API_KEY else 'kosong'} · model default {config.OPENAI_MODEL or '-'}")
+        used = list(dict.fromkeys(used + ["openai"]))
     if "gemini" in used or rec == "gemini":
         print("\n== Gemini ==")
         if config.GEMINI_API_KEY:

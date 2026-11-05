@@ -202,3 +202,41 @@ def test_gemini_retries_on_503(monkeypatch):
         raise AssertionError("harus gagal")
     except llm.LLMError as e:
         assert "high demand" in str(e) and len(calls) == 1  # 400 tidak dicoba ulang
+
+
+def test_openai_compatible_router_stream(monkeypatch):
+    import requests
+
+    from app.core import config
+
+    lines = [": keep-alive", 'data: {"choices":[{"delta":{"role":"assistant"}}]}',
+             'data: {"choices":[{"delta":{"content":"24 "}}]}', 'data: {"choices":[{"delta":{"content":"SKS [1]."}}]}',
+             "data: [DONE]"]
+    seen = {}
+
+    class Resp:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def iter_lines(self, decode_unicode=False):
+            return iter(lines)
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    def post(url, **kw):
+        seen.update(url=url, **kw)
+        return Resp()
+
+    monkeypatch.setattr(config, "OPENAI_API_KEY", "kunci")
+    monkeypatch.setattr(config, "LLM_MODELS", "openai:qwen/qwen3-32b:free=Qwen,gemini:gemini-3.8-flash=Gemini")
+    monkeypatch.setattr(requests, "post", post)
+    assert [m["id"] for m in llm.available_models()] == ["openai:qwen/qwen3-32b:free", "gemini:gemini-3.8-flash"]
+    assert "".join(llm.stream("sys", [{"role": "user", "content": "halo"}], "openai:qwen/qwen3-32b:free")) == "24 SKS [1]."
+    assert seen["url"].endswith("/chat/completions") and seen["json"]["model"] == "qwen/qwen3-32b:free"
+    assert seen["headers"]["Authorization"] == "Bearer kunci" and seen["json"]["messages"][0]["role"] == "system"

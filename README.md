@@ -124,6 +124,20 @@ PDF yang diunggah lewat halaman admin tersimpan di `backend/data/` di komputer a
 
 Supaya hasilnya bisa diulang (penting untuk laporan atau skripsi), catat dokumen yang dipakai di [`spec/sumber-dokumen.md`](spec/sumber-dokumen.md): judul, tahun, dan tautan resmi.
 
+## Banyak Model Sekaligus (Router)
+
+Selain Gemini dan Ollama, Balai Ilmu bisa memakai **router berformat OpenAI**, yaitu satu API key untuk banyak model. Contohnya OpenRouter (beberapa modelnya gratis), router lokal, LM Studio, atau Groq. Isi di `backend/.env`:
+
+```
+OPENAI_BASE_URL=https://openrouter.ai/api/v1
+OPENAI_API_KEY=kunci-dari-router
+LLM_PROVIDER=openai
+OPENAI_MODEL=nama-model-default
+LLM_MODELS=openai:nama-model-1=Label 1,openai:nama-model-2=Label 2,gemini:gemini-3.8-flash=Gemini
+```
+
+Semua model di `LLM_MODELS` muncul di **pemilih model** pada header chat. Nama model harus persis sama dengan daftar model di router. Cek dengan `python -m app.check`.
+
 ## Pengaturan Penting (`backend/.env`)
 
 | Variabel | Fungsi |
