@@ -325,3 +325,39 @@ def test_gemini_thinking_config_falls_back_when_rejected(monkeypatch):
     bodies.clear()
     "".join(llm.stream_gemini("sys", [], model="model-lama"))  # berikutnya langsung tanpa thinkingConfig
     assert len(bodies) == 1 and "thinkingConfig" not in bodies[0]
+
+
+def test_multiple_openai_compatible_providers(monkeypatch):
+    import requests
+
+    from app.core import config
+
+    seen = []
+
+    class Resp:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def iter_lines(self, decode_unicode=False):
+            return iter(['data: {"choices":[{"delta":{"content":"ok"}}]}', "data: [DONE]"])
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    def post(url, headers=None, json=None, **kw):
+        seen.append((url, headers.get("Authorization"), json["model"]))
+        return Resp()
+
+    monkeypatch.setattr(config, "OPENROUTER_API_KEY", "kunci-or")
+    monkeypatch.setattr(config, "NVIDIA_API_KEY", "nvapi-x")
+    monkeypatch.setattr(config, "LLM_MODELS", "openrouter:deepseek/deepseek-chat:free=DeepSeek,nvidia:meta/llama-x=Llama")
+    monkeypatch.setattr(requests, "post", post)
+    assert "".join(llm.stream("s", [], "openrouter:deepseek/deepseek-chat:free")) == "ok"
+    assert "".join(llm.stream("s", [], "nvidia:meta/llama-x")) == "ok"
+    assert seen[0] == ("https://openrouter.ai/api/v1/chat/completions", "Bearer kunci-or", "deepseek/deepseek-chat:free")
+    assert seen[1] == ("https://integrate.api.nvidia.com/v1/chat/completions", "Bearer nvapi-x", "meta/llama-x")

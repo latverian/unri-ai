@@ -97,18 +97,35 @@ def stream_gemini(system: str, messages: list[dict], model: str | None = None) -
                         yield text
 
 
-def stream_openai(system: str, messages: list[dict], model: str | None = None) -> Iterator[str]:
-    """API berformat OpenAI (/chat/completions): OpenRouter dan router sejenis yang menyediakan banyak model."""
-    mdl = model or config.OPENAI_MODEL
+# Penyedia berformat OpenAI: nama -> (alamat API, API key, model default, label, nama variabel .env)
+COMPAT = {
+    "openai": (lambda: config.OPENAI_BASE_URL, lambda: config.OPENAI_API_KEY, lambda: config.OPENAI_MODEL,
+               "Router", "OPENAI"),
+    "openrouter": (lambda: "https://openrouter.ai/api/v1", lambda: config.OPENROUTER_API_KEY,
+                   lambda: config.OPENROUTER_MODEL, "OpenRouter", "OPENROUTER"),
+    "nvidia": (lambda: "https://integrate.api.nvidia.com/v1", lambda: config.NVIDIA_API_KEY,
+               lambda: config.NVIDIA_MODEL, "NVIDIA", "NVIDIA"),
+}
+
+
+def compat_info(name: str) -> dict:
+    base, key, model, label, env = COMPAT[name]
+    return {"base": base().rstrip("/"), "key": key(), "model": model(), "label": label, "env": env}
+
+
+def stream_openai(system: str, messages: list[dict], model: str | None = None, name: str = "openai") -> Iterator[str]:
+    """API berformat OpenAI (/chat/completions): OpenRouter, NVIDIA, 9router, dan sejenisnya."""
+    info = compat_info(name)
+    mdl = model or info["model"]
     if not mdl:
-        raise LLMError("OPENAI_MODEL belum diisi")
+        raise LLMError(f"{info['env']}_MODEL belum diisi")
     headers = {"X-Title": "Balai Ilmu"}
-    if config.OPENAI_API_KEY:
-        headers["Authorization"] = f"Bearer {config.OPENAI_API_KEY}"
+    if info["key"]:
+        headers["Authorization"] = f"Bearer {info['key']}"
     r = None
     for attempt in range(GEMINI_RETRIES + 1):
         try:
-            r = requests.post(f"{config.OPENAI_BASE_URL}/chat/completions", headers=headers, stream=True,
+            r = requests.post(f"{info['base']}/chat/completions", headers=headers, stream=True,
                               timeout=(5, config.LLM_READ_TIMEOUT), json={
                                   "model": mdl, "stream": True, "temperature": config.LLM_TEMPERATURE,
                                   "messages": [{"role": "system", "content": system}, *messages]})
@@ -120,7 +137,7 @@ def stream_openai(system: str, messages: list[dict], model: str | None = None) -
             if transient and attempt < GEMINI_RETRIES:
                 time.sleep(RETRY_DELAYS[attempt])
                 continue
-            raise LLMError(f"Router ({config.OPENAI_BASE_URL}) gagal: {google_error(e)}") from e
+            raise LLMError(f"{info['label']} ({info['base']}) gagal: {google_error(e)}") from e
     think = ThinkFilter()
     with r:
         for line in r.iter_lines(decode_unicode=True):
@@ -178,10 +195,17 @@ class ThinkFilter:
         return self._emit(rest)
 
 
-PROVIDERS = {"ollama": stream_ollama, "gemini": stream_gemini, "openai": stream_openai}
+def _compat_stream(name: str):
+    def fn(system: str, messages: list[dict], model: str | None = None) -> Iterator[str]:
+        return stream_openai(system, messages, model, name)
+    return fn
+
+
+PROVIDERS = {"ollama": stream_ollama, "gemini": stream_gemini,
+             **{n: (stream_openai if n == "openai" else _compat_stream(n)) for n in COMPAT}}
 DEFAULT_MODEL = {"ollama": lambda: config.OLLAMA_MODEL, "gemini": lambda: config.GEMINI_MODEL,
-                 "openai": lambda: config.OPENAI_MODEL}
-LABELS = {"gemini": "Gemini", "ollama": "Lokal (Ollama)", "openai": "Router"}
+                 **{n: COMPAT[n][2] for n in COMPAT}}
+LABELS = {"gemini": "Gemini", "ollama": "Lokal (Ollama)", **{n: COMPAT[n][3] for n in COMPAT}}
 
 
 def available_models() -> list[dict]:

@@ -43,6 +43,11 @@ GEMINI_THINKING_LEVEL = _env("GEMINI_THINKING_LEVEL", "low")
 OPENAI_BASE_URL = _env("OPENAI_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
 OPENAI_API_KEY = _env("OPENAI_API_KEY")
 OPENAI_MODEL = _env("OPENAI_MODEL")
+# Penyedia berformat OpenAI yang sudah dikenal: cukup isi API key-nya (boleh lebih dari satu sekaligus).
+OPENROUTER_API_KEY = _env("OPENROUTER_API_KEY")
+OPENROUTER_MODEL = _env("OPENROUTER_MODEL")
+NVIDIA_API_KEY = _env("NVIDIA_API_KEY")
+NVIDIA_MODEL = _env("NVIDIA_MODEL")
 
 MAX_MESSAGE_CHARS = int(_env("MAX_MESSAGE_CHARS", "1000"))
 MAX_HISTORY = int(_env("MAX_HISTORY", "6"))

@@ -124,24 +124,22 @@ PDF yang diunggah lewat halaman admin tersimpan di `backend/data/` di komputer a
 
 Supaya hasilnya bisa diulang (penting untuk laporan atau skripsi), catat dokumen yang dipakai di [`spec/sumber-dokumen.md`](spec/sumber-dokumen.md): judul, tahun, dan tautan resmi.
 
-## Banyak Model Sekaligus (Router)
+## Banyak Model Sekaligus (OpenRouter, NVIDIA, router lain)
 
-Selain Gemini dan Ollama, Balai Ilmu bisa memakai **router berformat OpenAI**, yaitu satu API key untuk banyak model. Contohnya OpenRouter (beberapa modelnya gratis), router lokal, LM Studio, atau Groq. Isi di `backend/.env`:
+Selain Gemini dan Ollama, Balai Ilmu bisa memakai penyedia **berformat OpenAI** yang menyediakan banyak model (DeepSeek, Qwen, Llama, dan lainnya). Beberapa penyedia boleh aktif **bersamaan**, dan modelnya dicampur di **pemilih model**.
 
+| Penyedia | Isi di `backend/.env` | Dipakai di `LLM_MODELS` sebagai |
+|---|---|---|
+| [OpenRouter](https://openrouter.ai/keys) | `OPENROUTER_API_KEY=...` | `openrouter:<nama-model>=Label` |
+| [NVIDIA](https://build.nvidia.com/settings/api-keys) | `NVIDIA_API_KEY=nvapi-...` | `nvidia:<nama-model>=Label` |
+| Router lain (9router, LM Studio, Groq, …) | `OPENAI_BASE_URL=...` dan `OPENAI_API_KEY=...` | `openai:<nama-model>=Label` |
+
+Contoh:
 ```
-OPENAI_BASE_URL=https://openrouter.ai/api/v1
-OPENAI_API_KEY=kunci-dari-router
-LLM_PROVIDER=openai
-OPENAI_MODEL=nama-model-default
-LLM_MODELS=openai:nama-model-1=Label 1,openai:nama-model-2=Label 2,gemini:gemini-3.8-flash=Gemini
+LLM_PROVIDER=openrouter
+LLM_MODELS=openrouter:<model-gratis>=Model A (gratis),nvidia:<model>=Model B (NVIDIA),gemini:gemini-3.8-flash=Gemini
 ```
-
-Semua model di `LLM_MODELS` muncul di **pemilih model** pada header chat. Nama model harus persis sama dengan daftar model di router. Cek dengan `python -m app.check`.
-
-**Contoh dengan [9router](https://github.com/decolua/9router)** (router lokal yang dijalankan di laptop sendiri):
-1. Jalankan 9router sesuai README-nya, lalu buka dashboard di `http://localhost:20128/dashboard` dan sambungkan provider yang ingin dipakai.
-2. Isi `backend/.env`: `OPENAI_BASE_URL=http://localhost:20128/v1`, `LLM_PROVIDER=openai`, dan `OPENAI_API_KEY` dari dashboard 9router (jika diwajibkan).
-3. Jalankan `python -m app.check` untuk melihat nama model yang tersedia (formatnya `provider/model`), lalu salin ke `OPENAI_MODEL` dan `LLM_MODELS`.
+Model pertama di `LLM_MODELS` menjadi default. Jalankan `python -m app.check` untuk melihat **nama model persis** dari tiap penyedia (model gratis ditampilkan lebih dulu) dan menguji koneksinya. Kuota gratis tiap penyedia terbatas dan bisa berubah, jadi cek halaman penyedianya.
 
 ## Pengaturan Penting (`backend/.env`)
 

@@ -198,26 +198,31 @@ def main() -> int:
                 else:
                     print(f"  {WARN} Model {config.OLLAMA_MODEL} belum ada. Jalankan: ollama pull {config.OLLAMA_MODEL}"
                           "  (atau: python -m app.check --pull)")
-    if "openai" in used or any(m["provider"] == "openai" for m in llm.available_models()):
-        print("\n== Router (format OpenAI) ==")
-        print(f"  {OK if config.OPENAI_API_KEY else WARN} {config.OPENAI_BASE_URL} · "
-              f"API key {'terisi' if config.OPENAI_API_KEY else 'kosong'} · model default {config.OPENAI_MODEL or '-'}")
+    listed = {m["provider"] for m in llm.available_models()}
+    for name in llm.COMPAT:
+        info = llm.compat_info(name)
+        if name not in used and name not in listed and not (name != "openai" and info["key"]):
+            continue
+        print(f"\n== {info['label']} (format OpenAI) ==")
+        print(f"  {OK if info['key'] else WARN} {info['base']} · API key {'terisi' if info['key'] else 'kosong'}"
+              f" ({info['env']}_API_KEY) · model default {info['model'] or '-'}")
         try:
-            headers = {"Authorization": f"Bearer {config.OPENAI_API_KEY}"} if config.OPENAI_API_KEY else {}
-            r = requests.get(f"{config.OPENAI_BASE_URL}/models", headers=headers, timeout=10)
+            headers = {"Authorization": f"Bearer {info['key']}"} if info["key"] else {}
+            r = requests.get(f"{info['base']}/models", headers=headers, timeout=15)
             r.raise_for_status()
             ids = [m.get("id") for m in r.json().get("data", []) if m.get("id")]
             free = sorted(i for i in ids if i.endswith(":free") or i.endswith("-free"))
             ids = free + [i for i in ids if i not in free]  # model gratis ditampilkan lebih dulu
-            print(f"  {OK} Router menyediakan {len(ids)} model ({len(free)} gratis). "
-                  "Contoh nama untuk OPENAI_MODEL / LLM_MODELS:")
+            print(f"  {OK} Tersedia {len(ids)} model ({len(free)} bertanda gratis). "
+                  f"Tulis di LLM_MODELS sebagai {name}:<nama-model>=Label")
             for mid in ids[:25]:
                 print(f"      - {mid}")
             if len(ids) > 25:
                 print(f"      … dan {len(ids) - 25} lainnya")
         except requests.RequestException as e:
-            print(f"  {FAIL} Daftar model router tidak bisa diambil: {llm.google_error(e)}")
-        used = list(dict.fromkeys(used + ["openai"]))
+            print(f"  {FAIL} Daftar model tidak bisa diambil: {llm.google_error(e)}")
+        if info["model"] or name in listed or name in used:
+            used = list(dict.fromkeys(used + [name]))
     if "gemini" in used or rec == "gemini":
         print("\n== Gemini ==")
         if config.GEMINI_API_KEY:
