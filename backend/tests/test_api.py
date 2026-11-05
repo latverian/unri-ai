@@ -144,3 +144,11 @@ def test_fallback_provider(monkeypatch):
     monkeypatch.setitem(llm.PROVIDERS, "gemini", lambda s, m: iter(["ok"]))
     monkeypatch.setattr(config, "LLM_FALLBACK", "gemini")
     assert "".join(llm.stream("sys", [])) == "ok"
+
+
+def test_check_recommendation():
+    from app.check import recommend
+    assert recommend(None, None)[0] == "gemini"
+    assert recommend(8, None)[0] == "gemini"
+    assert recommend(16, None) == ("ollama", recommend(16, None)[1]) and "3b" in recommend(16, None)[1]
+    assert "7b" in recommend(32, "Apple Silicon")[1]

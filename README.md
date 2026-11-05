@@ -42,33 +42,42 @@ cd backend
 ```bash
 python -m venv .venv
 ```
-Aktifkan venv: `source .venv/bin/activate` (Mac/Linux) atau `.venv\Scripts\activate` (Windows). Lalu pilih **salah satu**:
-
-- **A. Gratis penuh dan offline** (perlu RAM ≥ 8 GB, unduhan ±2 GB): install [Ollama](https://ollama.com/download), lalu:
-  ```bash
-  ollama pull qwen2.5:3b
-  ```
-  ```bash
-  pip install -r requirements-local-embed.txt
-  ```
-- **B. Laptop ringan**, memakai Gemini free tier: ambil API key di https://aistudio.google.com, lalu:
-  ```bash
-  pip install -r requirements.txt
-  ```
-  Di `.env` nanti isi `LLM_PROVIDER=gemini`, `EMBED_PROVIDER=gemini`, `GEMINI_API_KEY=...`, dan `MIN_SCORE=0.6`.
-
+Aktifkan venv: `source .venv/bin/activate` (Mac/Linux) atau `.venv\Scripts\activate` (Windows).
+```bash
+pip install -r requirements.txt
+```
 Salin konfigurasi (Windows: `copy .env.example .env`):
 ```bash
 cp .env.example .env
 ```
-Buat password admin, lalu tempel hasilnya ke `ADMIN_PASSWORD_HASH` di `.env`. Isi juga `JWT_SECRET` dengan string acak panjang.
+Lalu buka `backend/.env` dan isi tiga hal:
+1. **`GEMINI_API_KEY`**: ambil gratis di https://aistudio.google.com (menu *Get API key*).
+2. **`ADMIN_PASSWORD_HASH`**: hasil dari perintah di bawah.
+   ```bash
+   python -m app.core.security hash "passwordmu"
+   ```
+3. **`JWT_SECRET`**: string acak panjang, misalnya hasil dari:
+   ```bash
+   python -c "import secrets; print(secrets.token_urlsafe(48))"
+   ```
+
+Cek apakah semuanya siap. Perintah ini juga mendeteksi spesifikasi laptop dan mencoba bertanya ke LLM:
 ```bash
-python -m app.core.security hash "passwordmu"
+python -m app.check
 ```
 Jalankan server (dokumentasi API otomatis ada di http://localhost:8000/docs):
 ```bash
 uvicorn app.main:app --reload
 ```
+
+**Mau gratis penuh dan offline?** Install [Ollama](https://ollama.com/download), lalu di `.env` ubah `LLM_PROVIDER=ollama` dan `EMBED_PROVIDER=local`, kemudian:
+```bash
+pip install -r requirements-local-embed.txt
+```
+```bash
+python -m app.check --pull
+```
+`python -m app.check` akan menyarankan model yang cocok dengan RAM laptop Anda. Dengan `LLM_FALLBACK=ollama` (default), Ollama juga otomatis dipakai sebagai cadangan saat Gemini gagal.
 
 ### 2. Frontend (terminal baru)
 
