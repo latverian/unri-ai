@@ -283,3 +283,45 @@ def test_gemini_retries_on_timeout(monkeypatch):
     monkeypatch.setattr(llm, "RETRY_DELAYS", (0, 0, 0))
     monkeypatch.setattr(requests, "post", post)
     assert "".join(llm.stream_gemini("sys", [])) == "oke" and len(calls) == 2
+
+
+def test_gemini_thinking_config_falls_back_when_rejected(monkeypatch):
+    import requests
+
+    from app.core import config
+
+    class Resp:
+        def __init__(self, status):
+            self.status_code, self.reason = status, "x"
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise requests.HTTPError(response=self)
+
+        def json(self):
+            return {"error": {"message": "Invalid JSON payload: unknown field thinkingLevel in thinking_config"}}
+
+        def iter_lines(self, decode_unicode=False):
+            return iter(['data: {"candidates":[{"content":{"parts":[{"text":"ok"}]}}]}'])
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    bodies = []
+
+    def post(*a, json=None, **k):
+        bodies.append(dict(json["generationConfig"]))
+        return Resp(400 if "thinkingConfig" in json["generationConfig"] else 200)
+
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "x")
+    monkeypatch.setattr(config, "GEMINI_THINKING_LEVEL", "low")
+    monkeypatch.setattr(llm, "_no_thinking_config", set())
+    monkeypatch.setattr(requests, "post", post)
+    assert "".join(llm.stream_gemini("sys", [], model="model-lama")) == "ok"
+    assert "thinkingConfig" in bodies[0] and "thinkingConfig" not in bodies[1]
+    bodies.clear()
+    "".join(llm.stream_gemini("sys", [], model="model-lama"))  # berikutnya langsung tanpa thinkingConfig
+    assert len(bodies) == 1 and "thinkingConfig" not in bodies[0]

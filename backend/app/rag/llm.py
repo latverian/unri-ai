@@ -11,6 +11,7 @@ GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
 GEMINI_RETRIES = 3
 RETRY_STATUS = {429, 500, 503}
 RETRY_DELAYS = (1.5, 3, 6)  # detik
+_no_thinking_config: set[str] = set()
 
 
 class LLMError(Exception):
@@ -56,19 +57,29 @@ def stream_gemini(system: str, messages: list[dict], model: str | None = None) -
         raise LLMError("GEMINI_API_KEY belum diisi")
     contents = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
                 for m in messages]
+    mdl = model or config.GEMINI_MODEL
+    gen: dict = {"temperature": config.LLM_TEMPERATURE}
+    # Batasi "berpikir" model supaya jawaban lebih cepat muncul (kecuali model ini sudah terbukti menolaknya).
+    if config.GEMINI_THINKING_LEVEL and mdl not in _no_thinking_config:
+        gen["thinkingConfig"] = {"thinkingLevel": config.GEMINI_THINKING_LEVEL}
     r = None
     for attempt in range(GEMINI_RETRIES + 1):
         try:
             r = requests.post(
-                f"{GEMINI_BASE}/models/{model or config.GEMINI_MODEL}:streamGenerateContent",
+                f"{GEMINI_BASE}/models/{mdl}:streamGenerateContent",
                 params={"alt": "sse"}, headers={"x-goog-api-key": config.GEMINI_API_KEY},
                 stream=True, timeout=(5, config.LLM_READ_TIMEOUT),
                 json={"systemInstruction": {"parts": [{"text": system}]}, "contents": contents,
-                      "generationConfig": {"temperature": config.LLM_TEMPERATURE}})
+                      "generationConfig": gen})
             r.raise_for_status()
             break
         except requests.RequestException as e:
             status = getattr(getattr(e, "response", None), "status_code", None)
+            if status == 400 and "thinkingConfig" in gen and "think" in google_error(e).lower():
+                # Model tidak mendukung pengaturan ini: kirim ulang tanpa itu dan ingat untuk berikutnya.
+                _no_thinking_config.add(mdl)
+                gen.pop("thinkingConfig")
+                continue
             transient = status in RETRY_STATUS or isinstance(e, (requests.Timeout, requests.ConnectionError))
             # Server sibuk / kuota per menit / timeout: tunggu sebentar lalu coba lagi. Error lain langsung dilaporkan.
             if transient and attempt < GEMINI_RETRIES:

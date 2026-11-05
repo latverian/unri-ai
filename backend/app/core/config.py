@@ -37,6 +37,8 @@ OLLAMA_URL = _env("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_MODEL = _env("OLLAMA_MODEL", "qwen2.5:3b")
 GEMINI_API_KEY = _env("GEMINI_API_KEY")
 GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-3.8-flash")
+# Seberapa lama model "berpikir" sebelum menjawab: low (cepat, cukup untuk RAG) | high. Kosong = bawaan model.
+GEMINI_THINKING_LEVEL = _env("GEMINI_THINKING_LEVEL", "low")
 # Router / layanan berformat OpenAI (OpenRouter, router lokal, LM Studio, Groq, dll.)
 OPENAI_BASE_URL = _env("OPENAI_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
 OPENAI_API_KEY = _env("OPENAI_API_KEY")
