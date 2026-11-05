@@ -136,6 +136,10 @@ def try_llm(provider: str) -> bool:
             text += tok
     except llm.LLMError as e:
         print(f"  {FAIL} {provider}: {e}")
+        if provider == "gemini" and ("503" in str(e) or "429" in str(e)):
+            print("      → Server Gemini sedang sibuk atau kuota per menit habis (sementara).\n"
+                  "        Sudah dicoba ulang otomatis; tunggu 1–2 menit lalu jalankan lagi.\n"
+                  "        Ollama sebagai LLM_FALLBACK membuat aplikasi tetap jalan saat ini terjadi.")
         if provider == "gemini" and "404" in str(e):
             print(f"      → Model {config.GEMINI_MODEL} tidak tersedia. Ganti GEMINI_MODEL di backend/.env "
                   "dengan nama model yang disarankan pada pesan di atas.")

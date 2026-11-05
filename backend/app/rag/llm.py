@@ -1,5 +1,6 @@
 """Pemanggilan LLM secara streaming: Ollama (lokal) atau Gemini (free tier)."""
 import json
+import time
 from collections.abc import Iterator
 
 import requests
@@ -7,6 +8,9 @@ import requests
 from app.core import config
 
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
+GEMINI_RETRIES = 3
+RETRY_STATUS = {429, 500, 503}
+RETRY_DELAYS = (1.5, 3, 6)  # detik
 
 
 class LLMError(Exception):
@@ -52,16 +56,24 @@ def stream_gemini(system: str, messages: list[dict], model: str | None = None) -
         raise LLMError("GEMINI_API_KEY belum diisi")
     contents = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
                 for m in messages]
-    try:
-        r = requests.post(
-            f"{GEMINI_BASE}/models/{model or config.GEMINI_MODEL}:streamGenerateContent",
-            params={"alt": "sse"}, headers={"x-goog-api-key": config.GEMINI_API_KEY},
-            stream=True, timeout=(5, 120),
-            json={"systemInstruction": {"parts": [{"text": system}]}, "contents": contents,
-                  "generationConfig": {"temperature": config.LLM_TEMPERATURE}})
-        r.raise_for_status()
-    except requests.RequestException as e:
-        raise LLMError(f"Gemini gagal: {google_error(e)}") from e
+    r = None
+    for attempt in range(GEMINI_RETRIES + 1):
+        try:
+            r = requests.post(
+                f"{GEMINI_BASE}/models/{model or config.GEMINI_MODEL}:streamGenerateContent",
+                params={"alt": "sse"}, headers={"x-goog-api-key": config.GEMINI_API_KEY},
+                stream=True, timeout=(5, 120),
+                json={"systemInstruction": {"parts": [{"text": system}]}, "contents": contents,
+                      "generationConfig": {"temperature": config.LLM_TEMPERATURE}})
+            r.raise_for_status()
+            break
+        except requests.RequestException as e:
+            status = getattr(getattr(e, "response", None), "status_code", None)
+            # Server sibuk / kuota per menit: tunggu sebentar lalu coba lagi. Error lain langsung dilaporkan.
+            if status in RETRY_STATUS and attempt < GEMINI_RETRIES:
+                time.sleep(RETRY_DELAYS[attempt])
+                continue
+            raise LLMError(f"Gemini gagal: {google_error(e)}") from e
     with r:
         for line in r.iter_lines(decode_unicode=True):
             if not line or not line.startswith("data:"):

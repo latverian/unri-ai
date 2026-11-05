@@ -162,3 +162,43 @@ def test_refusal_without_citation_is_not_found(client, auth, monkeypatch):
     done = events[-1][1]
     assert events[0][1]["sources"] and done["found"] is False and done["cited"] == []
     client.delete(f"/api/admin/documents/{doc_id}", headers=auth)
+
+
+def test_gemini_retries_on_503(monkeypatch):
+    import requests
+
+    from app.core import config
+
+    class Resp:
+        def __init__(self, status):
+            self.status_code, self.reason = status, "x"
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise requests.HTTPError(response=self)
+
+        def json(self):
+            return {"error": {"message": "high demand"}}
+
+        def iter_lines(self, decode_unicode=False):
+            return iter(['data: {"candidates":[{"content":{"parts":[{"text":"halo"}]}}]}'])
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    calls = []
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "x")
+    monkeypatch.setattr(llm, "RETRY_DELAYS", (0, 0, 0))
+    monkeypatch.setattr(requests, "post", lambda *a, **k: calls.append(1) or Resp(503 if len(calls) < 3 else 200))
+    assert "".join(llm.stream_gemini("sys", [])) == "halo" and len(calls) == 3
+
+    calls.clear()
+    monkeypatch.setattr(requests, "post", lambda *a, **k: calls.append(1) or Resp(400))
+    try:
+        list(llm.stream_gemini("sys", []))
+        raise AssertionError("harus gagal")
+    except llm.LLMError as e:
+        assert "high demand" in str(e) and len(calls) == 1  # 400 tidak dicoba ulang
