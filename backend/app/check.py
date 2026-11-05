@@ -207,7 +207,10 @@ def main() -> int:
             r = requests.get(f"{config.OPENAI_BASE_URL}/models", headers=headers, timeout=10)
             r.raise_for_status()
             ids = [m.get("id") for m in r.json().get("data", []) if m.get("id")]
-            print(f"  {OK} Router menyediakan {len(ids)} model. Contoh nama untuk OPENAI_MODEL / LLM_MODELS:")
+            free = sorted(i for i in ids if i.endswith(":free") or i.endswith("-free"))
+            ids = free + [i for i in ids if i not in free]  # model gratis ditampilkan lebih dulu
+            print(f"  {OK} Router menyediakan {len(ids)} model ({len(free)} gratis). "
+                  "Contoh nama untuk OPENAI_MODEL / LLM_MODELS:")
             for mid in ids[:25]:
                 print(f"      - {mid}")
             if len(ids) > 25:
