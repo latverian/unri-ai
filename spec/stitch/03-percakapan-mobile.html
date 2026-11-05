@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Noto+Serif:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#FBF7EE;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'on-primary': '#ffffff', 'on-surface': '#131e18', 'dark-text-muted': '#A7B8AD', 'primary-soft': '#DCEFE4', 'secondary-container': '#fed255', 'primary-fixed': '#a8f3c6', 'on-tertiary': '#ffffff', 'on-secondary-container': '#735a00', 'dark-text': '#E8EFE9', 'primary-strong': '#073B26', 'dark-bg': '#0E1712', 'text-muted': '#4A5A51', 'on-background': '#131e18', 'on-error-container': '#93000a', 'background': '#f0fdf3', 'dark-surface-container': '#1E2F25', 'surface-bright': '#f0fdf3', 'inverse-primary': '#8dd6ab', 'surface': '#FFFFFF', 'surface-tint': '#206b48', 'primary-container': '#0b5d3b', 'error-container': '#ffdad6', 'surface-container-low': '#eaf7ed', 'dark-surface': '#16231C', 'error': '#ba1a1a', 'on-tertiary-fixed': '#3c060c', 'on-secondary': '#ffffff', 'surface-dim': '#d0ddd4', 'on-surface-variant': '#404942', 'bg-canvas': '#FBF7EE', 'primary': '#004429', 'outline': '#707a72', 'on-primary-fixed-variant': '#005232', 'surface-container-high': '#dfebe2', 'secondary-fixed': '#ffe08e', 'on-secondary-fixed-variant': '#584400', 'gold-text': '#7A5C0A', 'surface-container-lowest': '#ffffff', 'surface-container': '#F4EFE3', 'on-primary-fixed': '#002111', 'dark-primary-strong': '#A8E6C6', 'inverse-on-surface': '#e7f4ea', 'dark-gold-soft': '#3A3218', 'on-secondary-fixed': '#241a00', 'dark-primary': '#3FBF7F', 'surface-variant': '#d9e6dc', 'surface-container-highest': '#d9e6dc', 'dark-border': '#2A3B31', 'tertiary-container': '#823b3d', 'tertiary': '#652528', 'border-subtle': '#E4DECF', 'tertiary-fixed-dim': '#ffb3b2', 'gold-soft': '#F6EBC8', 'on-error': '#ffffff', 'dark-gold': '#E3BE4F', 'on-tertiary-container': '#ffafaf', 'on-tertiary-fixed-variant': '#753133', 'outline-variant': '#bfc9c0', 'on-primary-container': '#8ad4a8', 'secondary': '#755b00', 'primary-hover': '#1F8A5B', 'tertiary-fixed': '#ffdad9', 'secondary-fixed-dim': '#ecc246', 'primary-fixed-dim': '#8dd6ab', 'inverse-surface': '#28332d' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'gutter': '1.25rem', 'space-md': '1rem', 'margin-mobile': '1rem', 'gutter-mobile': '0.75rem', 'space-xs': '0.25rem', 'space-lg': '1.5rem', 'space-sm': '0.5rem', 'margin': '2rem', 'space-xl': '2rem' }, fontFamily: { 'title-sm': ['Plus Jakarta Sans'], 'body-lg': ['Plus Jakarta Sans'], 'label-sm': ['Plus Jakarta Sans'], 'body-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'headline-xl-mobile': ['Noto Serif'], 'citation-tag': ['JetBrains Mono'], 'code-md': ['JetBrains Mono'], 'headline-lg': ['Noto Serif'], 'headline-lg-mobile': ['Noto Serif'], 'label-md': ['Plus Jakarta Sans'], 'headline-sm': ['Noto Serif'], 'headline-md': ['Noto Serif'], 'title-md': ['Plus Jakarta Sans'], 'headline-xl': ['Noto Serif'] }, fontSize: { 'title-sm': ['16px', {'lineHeight': '24px', 'fontWeight': '600'}], 'body-lg': ['16px', {'lineHeight': '26px', 'fontWeight': '400'}], 'label-sm': ['12px', {'lineHeight': '16px', 'fontWeight': '500'}], 'body-md': ['14px', {'lineHeight': '22px', 'fontWeight': '400'}], 'body-sm': ['12px', {'lineHeight': '18px', 'fontWeight': '400'}], 'headline-xl-mobile': ['30px', {'lineHeight': '38px', 'fontWeight': '600'}], 'citation-tag': ['11px', {'lineHeight': '14px', 'letterSpacing': '0.04em', 'fontWeight': '500'}], 'code-md': ['13px', {'lineHeight': '20px', 'fontWeight': '400'}], 'headline-lg': ['32px', {'lineHeight': '40px', 'fontWeight': '600'}], 'headline-lg-mobile': ['24px', {'lineHeight': '32px', 'fontWeight': '600'}], 'label-md': ['14px', {'lineHeight': '20px', 'fontWeight': '500'}], 'headline-sm': ['20px', {'lineHeight': '28px', 'fontWeight': '500'}], 'headline-md': ['24px', {'lineHeight': '32px', 'fontWeight': '600'}], 'title-md': ['18px', {'lineHeight': '26px', 'fontWeight': '600'}], 'headline-xl': ['40px', {'lineHeight': '52px', 'fontWeight': '600'}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-bg-canvas font-body-md text-body-md text-on-surface antialiased flex flex-col min-h-screen selection:bg-gold-soft selection:text-gold-text"><header class="fixed top-0 inset-x-0 z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_4px_20px_-4px_rgba(7,59,38,0.06)]"><div class="h-16 px-gutter-mobile flex items-center justify-between"><button aria-label="Menu Utama" class="w-11 h-11 flex items-center justify-center rounded-lg text-primary hover:bg-primary-soft/50 transition-colors"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded-lg bg-primary-soft flex items-center justify-center text-primary shadow-[0_1px_4px_rgba(0,0,0,0.04)]"><span class="material-symbols-outlined text-[18px]">account_balance</span></div><div class="flex flex-col items-center"><div class="flex items-center gap-1"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">UNRI GPT</span><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span></div><span class="font-citation-tag text-citation-tag text-gold-text tracking-wider uppercase font-semibold">Balai Ilmu Riau</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Pengaturan Tampilan" class="w-11 h-11 flex items-center justify-center rounded-lg text-text-muted hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]">settings</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="w-full h-[6px] bg-repeat-x bg-[length:12px_6px] bg-[radial-gradient(polygon,transparent)]" style="background-image: url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 6%22 width=%2212%22 height=%226%22&gt;&lt;polygon points=%226,0 12,6 0,6%22 fill=%22%23755b00%22 opacity=%220.85%22/&gt;&lt;/svg&gt;');"></div></header><main class="flex flex-col relative w-full pt-16 pb-20 bg-bg-canvas flex-1"><div class="flex flex-col w-full px-margin-mobile pb-28 pt-2">
+<!-- Pucuk Rebung Micro Accent Header Banner -->
+<div class="w-full mb-space-sm flex items-center justify-between px-space-sm py-1.5 rounded-lg bg-surface-container/60 shadow-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-citation-tag text-citation-tag text-primary-strong uppercase font-semibold">Ruang Konsultasi Akademik</span>
+</div>
+<span class="font-citation-tag text-citation-tag text-gold-text bg-gold-soft/80 px-2 py-0.5 rounded-full font-medium">Semester Genap 2024/2025</span>
+</div>
+<!-- Conversational Stream -->
+<div class="flex flex-col gap-space-md w-full">
+<!-- Timestamp Divider -->
+<div class="flex items-center justify-center my-1">
+<div class="h-[1px] bg-border-subtle flex-1"></div>
+<span class="px-space-sm font-label-sm text-label-sm text-text-muted bg-bg-canvas">Hari Ini, 10:42 WIB</span>
+<div class="h-[1px] bg-border-subtle flex-1"></div>
+</div>
+<!-- User Bubble (Kanan) -->
+<div class="flex flex-col items-end w-full pl-8">
+<div class="flex items-end gap-1.5 max-w-[90%]">
+<div class="bg-primary text-on-primary rounded-2xl rounded-br-sm px- space-md py-3 shadow-sm">
+<p class="font-body-md text-body-md leading-relaxed text-on-primary">
+            Berapa SKS maksimal kalau IPS saya 3,2 di semester genap?
+          </p>
+</div>
+</div>
+<span class="font-citation-tag text-citation-tag text-text-muted mt-1 mr-1 flex items-center gap-1">
+        10:42 <span class="material-symbols-outlined text-[12px] text-primary">done_all</span>
+</span>
+</div>
+<!-- Assistant Balai Ilmu Bubble (Kiri) -->
+<div class="flex flex-col items-start w-full pr-2">
+<!-- Avatar & Identity Bar -->
+<div class="flex items-center gap-2 mb-1.5 ml-1">
+<div class="w-7 h-7 rounded-lg bg-primary-soft text-primary flex items-center justify-center shadow-sm">
+<svg class="w-4 h-4 fill-current text-primary" viewbox="0 0 24 24">
+<path d="M12 2L4 6v3c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4zm0 2.2l6 3v2.3c0 4.41-3.05 8.54-6 9.8-2.95-1.26-6-5.39-6-9.8V7.2l6-3z"></path>
+<polygon fill="#755b00" points="12,7 13.8,11.2 18,11.2 14.5,13.8 15.8,18 12,15.2 8.2,18 9.5,13.8 6,11.2 10.2,11.2"></polygon>
+</svg>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-title-sm text-title-sm text-primary-strong">Balai Ilmu UNRI</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-citation-tag bg-gold-soft text-gold-text font-bold uppercase tracking-wider">RAG Terverifikasi</span>
+</div>
+</div>
+<!-- Main Assistant Content Card -->
+<div class="bg-surface rounded-2xl rounded-tl-sm p- space-md shadow-md w-full">
+<!-- Text Answer -->
+<div class="font-body-md text-body-md text-on-surface space-y-2 leading-relaxed">
+<p>
+            Berdasarkan <strong>Buku Pedoman Akademik Universitas Riau Tahun 2025</strong>, mahasiswa dengan Indeks Prestasi Semester (IPS) <strong>3,20</strong> berhak mengambil beban studi maksimal hingga <strong>24 SKS</strong>
+<button class="inline-flex items-center justify-center bg-gold-soft text-gold-text px-1.5 py-0.5 rounded font-citation-tag text-citation-tag font-bold align-baseline ml-0.5 hover:bg-secondary-container transition-colors" id="citeBadge">
+              [1]
+            </button>.
+          </p>
+</div>
+<!-- Compact Responsive IPS Table (Mobile Tailored) -->
+<div class="mt-space-sm mb-space-sm bg-surface-container rounded-xl p-2.5 shadow-inner">
+<div class="flex items-center justify-between mb-1.5 px-1">
+<span class="font-label-sm text-label-sm font-semibold text-primary-strong flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">table_chart</span>
+              Ketentuan Beban Studi (SKS)
+            </span>
+<span class="font-citation-tag text-citation-tag text-text-muted">Pasal 28 Ayat 3</span>
+</div>
+<div class="w-full flex flex-col gap-1 text-[13px]">
+<!-- Row 1: Active Highlighted Row -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-primary-soft text-primary-strong shadow-xs font-medium">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>IPS ≥ 3,00</span>
+<span class="text-[10px] bg-primary text-on-primary px-1 rounded-sm uppercase tracking-wide">Posisi Anda (3,20)</span>
+</div>
+<span class="font-bold text-primary text-body-md">Maks. 24 SKS</span>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between px-2 py-1.5 rounded-lg bg-surface/70 text-text-muted">
+<span>IPS 2,50 – 2,99</span>
+<span class="font-semibold text-on-surface">Maks. 21 SKS</span>
+</div>
+<!-- Row 3 -->
+<div class="flex items-center justify-between px-2 py-1.5 rounded-lg bg-surface/70 text-text-muted">
+<span>IPS 2,00 – 2,49</span>
+<span class="font-semibold text-on-surface">Maks. 18 SKS</span>
+</div>
+<!-- Row 4 -->
+<div class="flex items-center justify-between px-2 py-1.5 rounded-lg bg-surface/70 text-text-muted">
+<span>IPS &lt; 2,00</span>
+<span class="font-semibold text-on-surface">Maks. 15 SKS</span>
+</div>
+</div>
+</div>
+<!-- Note Tip Card -->
+<div class="flex items-start gap-2 bg-gold-soft/50 rounded-lg p-2.5 mb-space-sm">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">lightbulb</span>
+<p class="font-body-sm text-body-sm text-gold-text">
+<strong>Catatan Pembimbing Akademik:</strong> Pastikan Anda telah berkonsultasi dan mendapatkan persetujuan KRS dari Dosen PA sebelum batas akhir masa pengisian KRS di Portal Akademik UNRI.
+          </p>
+</div>
+<!-- Foldable Citation Accordion (Spec Section 7.2) -->
+<div class="w-full mt-space-sm bg-surface-container rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between px-3 py-2.5 text-left hover:bg-surface-container-high transition-colors" id="citationToggle">
+<div class="flex items-center gap-1.5">
+<span class="text-[15px]">📖</span>
+<span class="font-label-sm text-label-sm font-semibold text-primary">2 Sumber Dokumen Terverifikasi</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-citation-tag text-citation-tag text-gold-text bg-gold-soft px-1.5 py-0.2 rounded font-bold">RAG UNRI</span>
+<span class="material-symbols-outlined text-[18px] text-primary transition-transform duration-200" id="chevronIcon">expand_more</span>
+</div>
+</button>
+<!-- Accordion Collapsible Content -->
+<div class="flex flex-col gap-2 p-2.5 pt-0" id="citationPanel">
+<!-- Source Card 1 -->
+<div class="bg-surface rounded-lg p-2.5 shadow-sm relative">
+<div class="flex items-center justify-between mb-1">
+<span class="font-citation-tag text-citation-tag text-primary-strong font-medium truncate max-w-[210px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">description</span>
+                  pedoman_akademik_2025.pdf
+                </span>
+<span class="font-citation-tag text-citation-tag text-gold-text bg-gold-soft px-1.5 py-0.5 rounded font-semibold">89% Cocok</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted leading-tight mb-1.5">
+                "...Mahasiswa yang memperoleh Indeks Prestasi Semester (IPS) lebih dari atau sama dengan 3,00 berhak mengambil beban studi semester berikutnya maksimal sejumlah 24 (dua puluh empat) SKS..."
+              </p>
+<div class="flex items-center justify-between text-text-muted font-citation-tag text-citation-tag">
+<span>Halaman 14 · Bab IV Beban Studi</span>
+<span class="text-primary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">verified</span> Terindeks
+                </span>
+</div>
+</div>
+<!-- Source Card 2 -->
+<div class="bg-surface rounded-lg p-2.5 shadow-sm">
+<div class="flex items-center justify-between mb-1">
+<span class="font-citation-tag text-citation-tag text-primary-strong font-medium truncate max-w-[210px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">description</span>
+                  kalender_akademik_24_25.pdf
+                </span>
+<span class="font-citation-tag text-citation-tag text-text-muted bg-surface-container-high px-1.5 py-0.5 rounded font-semibold">78% Cocok</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-muted leading-tight mb-1">
+                "Jadwal pengisian Kartu Rencana Studi (KRS) Semester Genap dimulai pada tanggal 5 Februari s/d 16 Februari 2025."
+              </p>
+<div class="flex items-center justify-between text-text-muted font-citation-tag text-citation-tag">
+<span>Halaman 2 · Lampiran Rektor</span>
+<span class="text-text-muted">Arsip Resmi</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action Bar under bubble -->
+<div class="flex items-center gap-1.5 mt-2 ml-1">
+<button aria-label="Bermanfaat" class="w-8 h-8 rounded-lg bg-surface text-text-muted hover:text-primary hover:bg-primary-soft/50 flex items-center justify-center shadow-xs transition-colors" id="likeBtn">
+<span class="material-symbols-outlined text-[16px]">thumb_up</span>
+</button>
+<button aria-label="Kurang Relevan" class="w-8 h-8 rounded-lg bg-surface text-text-muted hover:text-tertiary hover:bg-error-container/40 flex items-center justify-center shadow-xs transition-colors" id="dislikeBtn">
+<span class="material-symbols-outlined text-[16px]">thumb_down</span>
+</button>
+<button class="h-8 px-2.5 rounded-lg bg-surface text-text-muted hover:text-primary hover:bg-primary-soft/50 flex items-center gap-1 shadow-xs transition-colors font-label-sm text-label-sm" id="copyBtn">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+<span>Salin</span>
+</button>
+<button class="h-8 px-2.5 rounded-lg bg-gold-soft text-gold-text hover:bg-secondary-container flex items-center gap-1 shadow-xs transition-colors font-label-sm text-label-sm font-semibold" id="followUpBtn">
+<span class="material-symbols-outlined text-[16px]">chat_add_on</span>
+<span>Tanya Lanjutan</span>
+</button>
+</div>
+<!-- Suggested Next Prompts Chips -->
+<div class="w-full mt-3 flex flex-col gap-1.5">
+<span class="font-citation-tag text-citation-tag text-text-muted uppercase font-bold tracking-wider ml-1">Pertanyaan Terkait:</span>
+<div class="flex flex-wrap gap-1.5">
+<button class="prompt-chip bg-surface rounded-full px-3 py-1.5 text-left font-label-sm text-label-sm text-primary-strong shadow-xs hover:bg-primary-soft/60 active:scale-95 transition-all flex items-center gap-1">
+<span>Kapan batas pengisian KRS semester ini?</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_outward</span>
+</button>
+<button class="prompt-chip bg-surface rounded-full px-3 py-1.5 text-left font-label-sm text-label-sm text-primary-strong shadow-xs hover:bg-primary-soft/60 active:scale-95 transition-all flex items-center gap-1">
+<span>Bagaimana prosedur ambil MK lintas prodi?</span>
+<span class="material-symbols-outlined text-[14px] text-secondary">arrow_outward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Toast Notification -->
+<div class="fixed top-20 inset-x-4 mx-auto max-w-[340px] bg-primary-strong text-on-primary px-3.5 py-2 rounded-xl shadow-xl flex items-center gap-2 z-50 opacity-0 pointer-events-none transition-all duration-300 transform -translate-y-2" id="toast">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<span class="font-label-sm text-label-sm flex-1" id="toastMsg">Teks disalin ke papan klip</span>
+</div>
+<!-- Bottom Fixed Composer Bar for 390px Mobile -->
+<div class="fixed bottom-16 inset-x-0 z-40 bg-surface/95 backdrop-blur-xl px-margin-mobile pt-2 pb-2.5 shadow-[0_-4px_24px_rgba(7,59,38,0.08)]">
+<div class="max-w-[420px] mx-auto flex flex-col gap-1.5">
+<!-- Input Frame -->
+<div class="flex items-center gap-1.5 bg-surface-container rounded-2xl p-1.5 shadow-inner">
+<!-- Attachment / Scope Pill Button -->
+<button aria-label="Pilih Ruang Lingkup" class="w-9 h-9 rounded-xl bg-surface text-primary flex items-center justify-center hover:bg-primary-soft transition-colors shadow-xs shrink-0" id="scopeBtn">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+<!-- Prompt Textarea Input -->
+<input class="flex-1 bg-transparent border-0 outline-none text-body-md font-body-md text-on-surface placeholder:text-text-muted px-1.5 py-1 min-w-0" id="chatInput" placeholder="Tanya seputar aturan akademik..." type="text"/>
+<!-- Attachment Button -->
+<button aria-label="Lampirkan Dokumen" class="w-8 h-8 rounded-lg text-text-muted hover:text-primary flex items-center justify-center transition-colors shrink-0">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+</button>
+<!-- Primary Send Button -->
+<button aria-label="Kirim Pertanyaan" class="w-9 h-9 rounded-xl bg-primary text-on-primary flex items-center justify-center hover:bg-primary-hover active:scale-95 transition-all shadow-sm shrink-0" id="sendBtn">
+<span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+</button>
+</div>
+<!-- Legal Disclaimer & Institutional Note -->
+<div class="flex items-center justify-between px-1.5">
+<span class="font-citation-tag text-[10px] text-text-muted">
+          Proyek asisten mahasiswa · Non-resmi
+        </span>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-citation-tag text-[10px] text-gold-text font-medium">Buku Pedoman 2025</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // Accordion Toggle
+    const citationToggle = document.getElementById('citationToggle');
+    const citationPanel = document.getElementById('citationPanel');
+    const chevronIcon = document.getElementById('chevronIcon');
+    const citeBadge = document.getElementById('citeBadge');
+
+    let isOpen = true;
+
+    function toggleCitation() {
+      isOpen = !isOpen;
+      if (isOpen) {
+        citationPanel.classList.remove('hidden');
+        chevronIcon.classList.remove('rotate-180');
+      } else {
+        citationPanel.classList.add('hidden');
+        chevronIcon.classList.add('rotate-180');
+      }
+    }
+
+    if (citationToggle) {
+      citationToggle.addEventListener('click', toggleCitation);
+    }
+
+    if (citeBadge) {
+      citeBadge.addEventListener('click', () => {
+        if (!isOpen) toggleCitation();
+        citationPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        showToast('Merujuk ke Lampiran Bab IV Halaman 14');
+      });
+    }
+
+    // Toast Functionality
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    let toastTimeout;
+
+    function showToast(message) {
+      clearTimeout(toastTimeout);
+      toastMsg.textContent = message;
+      toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2500);
+    }
+
+    // Action Buttons
+    const copyBtn = document.getElementById('copyBtn');
+    const likeBtn = document.getElementById('likeBtn');
+    const dislikeBtn = document.getElementById('dislikeBtn');
+    const followUpBtn = document.getElementById('followUpBtn');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const promptChips = document.querySelectorAll('.prompt-chip');
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard?.writeText(
+          'Berdasarkan Buku Pedoman Akademik Universitas Riau Tahun 2025, mahasiswa dengan IPS 3,20 berhak mengambil beban studi maksimal hingga 24 SKS.'
+        );
+        showToast('Ringkasan jawaban disalin ke clipboard');
+      });
+    }
+
+    let isLiked = false;
+    if (likeBtn) {
+      likeBtn.addEventListener('click', () => {
+        isLiked = !isLiked;
+        if (isLiked) {
+          likeBtn.classList.add('bg-primary-soft', 'text-primary');
+          showToast('Terima kasih atas umpan balik Anda');
+        } else {
+          likeBtn.classList.remove('bg-primary-soft', 'text-primary');
+        }
+      });
+    }
+
+    if (dislikeBtn) {
+      dislikeBtn.addEventListener('click', () => {
+        showToast('Umpan balik dicatat untuk penyempurnaan RAG');
+      });
+    }
+
+    if (followUpBtn) {
+      followUpBtn.addEventListener('click', () => {
+        chatInput.focus();
+        chatInput.value = 'Apakah 24 SKS tersebut sudah termasuk mata kuliah mengulang?';
+      });
+    }
+
+    promptChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const text = chip.querySelector('span:first-child')?.textContent || '';
+        chatInput.value = text;
+        chatInput.focus();
+      });
+    });
+
+    if (sendBtn) {
+      sendBtn.addEventListener('click', () => {
+        const val = chatInput.value.trim();
+        if (val) {
+          showToast('Mengirim pertanyaan: ' + val.substring(0, 24) + '...');
+          chatInput.value = '';
+        } else {
+          chatInput.focus();
+        }
+      });
+    }
+
+    if (chatInput) {
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendBtn.click();
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_-4px_rgba(27,38,32,0.07)]" data-active-classes="text-primary font-bold bg-primary-soft/60"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg transition-all text-primary font-bold bg-primary-soft/60" data-path="percakapan" href="#"><span class="material-symbols-outlined text-[22px]">chat_bubble</span><span class="font-label-sm text-label-sm">Tanya</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg text-text-muted transition-all" data-path="repositori-kampus" href="#"><span class="material-symbols-outlined text-[22px]">local_library</span><span class="font-label-sm text-label-sm">Pustaka</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg text-text-muted transition-all" data-path="jurnal-ilmiah" href="#"><span class="material-symbols-outlined text-[22px]">auto_stories</span><span class="font-label-sm text-label-sm">Jurnal</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg text-text-muted transition-all" data-path="riwayat-diskusi" href="#"><span class="material-symbols-outlined text-[22px]">history_edu</span><span class="font-label-sm text-label-sm">Riwayat</span></a></div></nav></body></html>

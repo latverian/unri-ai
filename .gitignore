@@ -1,0 +1,19 @@
+# Rahasia
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Node
+node_modules/
+dist/
+
+# Data lokal
+backend/data/chroma/
+backend/data/*.db
+
+.DS_Store

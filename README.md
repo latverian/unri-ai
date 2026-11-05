@@ -13,6 +13,7 @@ Asisten tanya-jawab akademik untuk mahasiswa Universitas Riau, berbasis **LLM + 
 | [`spec/prd.md`](spec/prd.md) | Latar belakang, tujuan, persona, user stories, rencana rilis, metrik keberhasilan, dan risiko |
 | [`spec/requirements.md`](spec/requirements.md) | Arsitektur, teknologi, kebutuhan fungsional/non-fungsional, kontrak API, model data, dan rencana kerja |
 | [`spec/design.md`](spec/design.md) | Sistem desain "Balai Ilmu": hijau UNRI dengan nuansa Melayu, tipografi, komponen, layout, dan microcopy |
+| [`spec/stitch/`](spec/stitch/) | Desain 7 layar dari Stitch (screenshot + HTML) |
 
 ## Gambaran Singkat
 
