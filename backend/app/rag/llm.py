@@ -108,6 +108,7 @@ def stream_openai(system: str, messages: list[dict], model: str | None = None) -
                 time.sleep(RETRY_DELAYS[attempt])
                 continue
             raise LLMError(f"Router ({config.OPENAI_BASE_URL}) gagal: {google_error(e)}") from e
+    think = ThinkFilter()
     with r:
         for line in r.iter_lines(decode_unicode=True):
             if not line or not line.startswith("data:"):
@@ -119,8 +120,49 @@ def stream_openai(system: str, messages: list[dict], model: str | None = None) -
             if data.get("error"):
                 raise LLMError(str(data["error"].get("message", data["error"])))
             for choice in data.get("choices", []):
-                if text := (choice.get("delta") or {}).get("content"):
+                # delta.reasoning / reasoning_content (proses berpikir model) sengaja diabaikan.
+                if text := think.feed((choice.get("delta") or {}).get("content") or ""):
                     yield text
+        if rest := think.flush():
+            yield rest
+
+
+class ThinkFilter:
+    """Buang blok <think>…</think> yang diselipkan sebagian model reasoning di dalam jawaban (aman lintas potongan)."""
+
+    OPEN, CLOSE = "<think>", "</think>"
+
+    def __init__(self):
+        self.buf, self.inside, self.started = "", False, False
+
+    def feed(self, text: str) -> str:
+        self.buf += text
+        out = []
+        while self.buf:
+            tag = self.CLOSE if self.inside else self.OPEN
+            i = self.buf.find(tag)
+            if i >= 0:
+                if not self.inside:
+                    out.append(self.buf[:i])
+                self.buf, self.inside = self.buf[i + len(tag):], not self.inside
+                continue
+            # Sisakan ekor yang mungkin awal sebuah tag yang terpotong.
+            keep = next((k for k in range(min(len(tag) - 1, len(self.buf)), 0, -1) if tag.startswith(self.buf[-k:])), 0)
+            if not self.inside:
+                out.append(self.buf[:len(self.buf) - keep])
+            self.buf = self.buf[len(self.buf) - keep:]
+            break
+        return self._emit("".join(out))
+
+    def _emit(self, text: str) -> str:
+        if not self.started:  # baris kosong sisa blok <think> di awal jawaban dibuang
+            text = text.lstrip()
+            self.started = bool(text)
+        return text
+
+    def flush(self) -> str:
+        rest, self.buf = ("" if self.inside else self.buf), ""
+        return self._emit(rest)
 
 
 PROVIDERS = {"ollama": stream_ollama, "gemini": stream_gemini, "openai": stream_openai}

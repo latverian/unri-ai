@@ -240,3 +240,12 @@ def test_openai_compatible_router_stream(monkeypatch):
     assert "".join(llm.stream("sys", [{"role": "user", "content": "halo"}], "openai:qwen/qwen3-32b:free")) == "24 SKS [1]."
     assert seen["url"].endswith("/chat/completions") and seen["json"]["model"] == "qwen/qwen3-32b:free"
     assert seen["headers"]["Authorization"] == "Bearer kunci" and seen["json"]["messages"][0]["role"] == "system"
+
+
+def test_think_filter_strips_reasoning_across_chunks():
+    f = llm.ThinkFilter()
+    chunks = ["<thi", "nk>hitung dulu", " IPS...</th", "ink>\n\nDengan", " ", "IPS 3,2", "\n\n", "boleh 24 SKS [1].", " a < b"]
+    out = "".join(f.feed(c) for c in chunks) + f.flush()
+    assert out == "Dengan IPS 3,2\n\nboleh 24 SKS [1]. a < b"
+    g = llm.ThinkFilter()  # tanpa blok think: spasi & baris baru utuh
+    assert "".join(g.feed(c) for c in ["Halo", " ", "dunia", "\n\n", "- satu"]) + g.flush() == "Halo dunia\n\n- satu"
