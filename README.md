@@ -1,6 +1,6 @@
-# 🎓 UNRI GPT
+# 🎓 Balai Ilmu
 
-Asisten tanya-jawab akademik untuk mahasiswa Universitas Riau, berbasis **LLM + RAG (Retrieval-Augmented Generation)**. Asisten ini menjawab **hanya dari dokumen kampus** dan **selalu menyertakan sumbernya**. Jika informasinya tidak ada di dokumen, asisten akan mengatakannya dengan jujur dan tidak mengarang jawaban.
+Asisten tanya-jawab akademik berbasis dokumen, dengan **studi kasus Universitas Riau (UNRI)**. Dibangun dengan **LLM + RAG (Retrieval-Augmented Generation)**. Asisten ini menjawab **hanya dari dokumen kampus** dan **selalu menyertakan sumbernya**. Jika informasinya tidak ada di dokumen, asisten akan mengatakannya dengan jujur dan tidak mengarang jawaban.
 
 > 🚧 **Status: MVP (Rilis 1) sedang dibangun.** Backend dan frontend sudah bisa dijalankan.
 
@@ -91,6 +91,15 @@ cd backend && pip install -r requirements-dev.txt && pytest
 ```bash
 cd frontend && npm run lint && npm run build
 ```
+
+## Dokumen Rujukan Tidak Disimpan di GitHub
+
+PDF yang diunggah lewat halaman admin tersimpan di `backend/data/` di komputer atau server yang menjalankan backend. Folder itu masuk `.gitignore`, jadi **tidak pernah ikut ter-commit**. Alasannya:
+- Repo ini publik, sedangkan hak cipta dokumen ada pada kampus. Cukup tautkan ke sumber resminya.
+- File PDF besar membuat repo berat.
+- Vektor dan database bisa dibuat ulang kapan saja dari PDF-nya.
+
+Supaya hasilnya bisa diulang (penting untuk laporan atau skripsi), catat dokumen yang dipakai di [`spec/sumber-dokumen.md`](spec/sumber-dokumen.md): judul, tahun, dan tautan resmi.
 
 ## Pengaturan Penting (`backend/.env`)
 

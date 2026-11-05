@@ -72,7 +72,7 @@ export default function AdminDocuments() {
       <div>
         <span className="label-caps rounded-full bg-emas-soft px-2.5 py-1 text-emas-teks">Balai arsip</span>
         <h1 className="mt-3 font-serif text-[26px] font-semibold leading-tight text-primary-strong md:text-[32px]">Kelola Dokumen</h1>
-        <p className="mt-1 max-w-2xl text-teks-2">Dokumen di sini menjadi satu-satunya rujukan UNRI GPT saat menjawab. Unggah dokumen publik saja.</p>
+        <p className="mt-1 max-w-2xl text-teks-2">Dokumen di sini menjadi satu-satunya rujukan Balai Ilmu saat menjawab. Unggah dokumen publik saja.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">

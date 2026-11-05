@@ -1,6 +1,6 @@
-# Design — UNRI GPT
+# Design — Balai Ilmu
 
-Panduan desain antarmuka UNRI GPT: **hijau UNRI dengan nuansa Melayu Riau**. Dokumen ini mencakup konsep, warna, tipografi, motif, komponen, tata letak, *microcopy*, dan aksesibilitas.
+Panduan desain antarmuka Balai Ilmu (studi kasus Universitas Riau): **hijau UNRI dengan nuansa Melayu Riau**. Dokumen ini mencakup konsep, warna, tipografi, motif, komponen, tata letak, *microcopy*, dan aksesibilitas.
 
 - Fitur dan prioritas: [`prd.md`](prd.md)
 - Kebutuhan teknis dan API: [`requirements.md`](requirements.md)
@@ -9,7 +9,7 @@ Panduan desain antarmuka UNRI GPT: **hijau UNRI dengan nuansa Melayu Riau**. Dok
 
 ## 1. Konsep: *"Balai Ilmu"*
 
-Balai dalam budaya Melayu adalah tempat orang berkumpul, bertanya, dan bermusyawarah. UNRI GPT dirancang sebagai **balai ilmu digital**: tenang, terbuka, dan berwibawa, tetapi tetap ramah untuk mahasiswa.
+Balai dalam budaya Melayu adalah tempat orang berkumpul, bertanya, dan bermusyawarah. Balai Ilmu dirancang sebagai **balai ilmu digital**: tenang, terbuka, dan berwibawa, tetapi tetap ramah untuk mahasiswa.
 
 **Tiga prinsip:**
 1. **Terpercaya dulu, baru cantik.** Sumber jawaban selalu terlihat jelas. Ornamen tidak boleh mengganggu keterbacaan.
@@ -157,7 +157,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
 
 ## 6. Logo dan Avatar Asisten
 - **Ikon:** dua garis bersilang seperti **selembayung** yang membentuk huruf "U" atau "V" terbuka, dengan titik emas di puncaknya (melambangkan ilmu atau cahaya). Bentuk geometris sederhana supaya tetap jelas di ukuran 24 px.
-- **Wordmark:** "UNRI" (Noto Serif 600, `--primary-strong`) + "GPT" (Plus Jakarta 600, `--emas-teks`).
+- **Wordmark:** "Balai" (Noto Serif 600, `--primary-strong`) + "Ilmu" (Noto Serif 600, `--emas-teks`), dengan subjudul "Studi kasus UNRI".
 - **Avatar asisten** di bubble: ikon selembayung putih di lingkaran `--primary`, 32 px.
 - Simpan sebagai SVG di `frontend/public/logo.svg` dan buat favicon dari ikon yang sama.
 
@@ -166,7 +166,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
 ### 7.1 Desktop (≥ 1024 px)
 ```
 ┌─────────────┬──────────────────────────────────────────────────────┐
-│ ⟨⟩ UNRI GPT │  Percakapan: Batas SKS                       ☾  ⋯    │  ← header 64px
+│ ⟨⟩ Balai Ilmu│  Percakapan: Batas SKS                       ☾  ⋯    │  ← header 64px
 │             │▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲│  ← garis pucuk rebung
 │ [+ Chat baru]│                                                     │
 │             │              ┌──────────────────────────────┐        │
@@ -194,7 +194,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
 ### 7.2 HP (< 768 px)
 ```
 ┌──────────────────────────┐
-│ ☰   ⟨⟩ UNRI GPT     ☾   │  ← sidebar menjadi drawer
+│ ☰   ⟨⟩ Balai Ilmu   ☾   │  ← sidebar menjadi drawer
 │▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲│
 │                          │
 │      ┌────────────────┐  │
@@ -216,7 +216,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
 ```
             ◈  (logo selembayung, 56px)
 
-        Selamat datang di UNRI GPT
+        Selamat datang di Balai Ilmu
    Tanya aturan akademik, dapat jawaban beserta sumbernya.
 
    ┌─────────────────────┐ ┌─────────────────────┐
@@ -230,7 +230,7 @@ Pola belah ketupat dan pucuk rebung dengan **opasitas 4–6%** di atas `--bg`, h
    ─ ▲▲▲▲ ─  Dari Pekanbaru ke Bengkalis,
              singgah sebentar membeli kopi;
              tanyalah apa yang ingin ditulis,
-             UNRI GPT siap menemani.          (Noto Serif italic, --teks-2)
+             Balai Ilmu siap menemani.          (Noto Serif italic, --teks-2)
 ```
 
 ### 7.4 Grid dan jarak
@@ -295,7 +295,7 @@ Nada: **sopan, hangat, dan ringkas**, seperti kakak tingkat yang santun. Memakai
 | Tempat | Teks |
 |---|---|
 | Placeholder composer | *Tanya soal KRS, cuti, skripsi, wisuda…* |
-| Judul sambutan | *Selamat datang di UNRI GPT* |
+| Judul sambutan | *Selamat datang di Balai Ilmu* |
 | Subjudul sambutan | *Tanya aturan akademik, dapat jawaban beserta sumbernya.* |
 | Memuat (tahap 1) | *Mencari di dokumen…* |
 | Memuat (tahap 2) | *Menyusun jawaban…* |
@@ -312,7 +312,7 @@ Ditampilkan acak di layar sambutan atau state kosong, dengan Noto Serif italic d
 > Dari Pekanbaru ke Bengkalis,
 > singgah sebentar membeli kopi;
 > tanyalah apa yang ingin ditulis,
-> UNRI GPT siap menemani.
+> Balai Ilmu siap menemani.
 
 > **Memuat lama (> 6 detik)**
 > Sampan kecil di Sungai Siak,

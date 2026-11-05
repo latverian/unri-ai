@@ -56,7 +56,7 @@ export default function ChatPage() {
             <button className="btn-icon lg:hidden" onClick={() => setDrawer(true)} aria-label="Buka menu"><Menu size={22} /></button>
             <div className="flex items-center gap-2 lg:hidden">
               <LogoMark size={28} />
-              <span className="font-serif text-lg font-semibold text-primary-strong">UNRI <span className="font-sans text-emas-teks">GPT</span></span>
+              <span className="font-serif text-lg font-semibold text-primary-strong">Balai <span className="text-emas-teks">Ilmu</span></span>
             </div>
             <h1 className="hidden min-w-0 truncate font-semibold lg:block">
               {chat.active ? chat.active.title : "Konsultasi Akademik"}

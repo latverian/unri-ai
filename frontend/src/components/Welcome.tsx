@@ -17,14 +17,14 @@ export function Welcome({ onPick }: { onPick: (q: string) => void }) {
       <div className="pola-balai pointer-events-none absolute inset-x-0 top-0 h-[420px]" aria-hidden="true" />
       <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-6 pt-8 text-center md:pt-14">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-emas-soft px-3 py-1 text-emas-teks">
-          <BookOpen size={14} /> <span className="label-caps">Balai Ilmu Digital</span>
+          <BookOpen size={14} /> <span className="label-caps">Studi kasus · Universitas Riau</span>
         </span>
         <LogoMark size={64} className="drop-shadow-sm" />
         <div className="space-y-2">
           <h1 className="font-serif text-[26px] font-semibold leading-[34px] text-primary-strong md:text-[36px] md:leading-[46px]">
-            Selamat datang di UNRI GPT
+            Selamat datang di Balai Ilmu
           </h1>
-          <p className="mx-auto max-w-xl text-teks-2">Tanya aturan akademik, dapat jawaban beserta sumbernya.</p>
+          <p className="mx-auto max-w-xl text-teks-2">Tanya aturan akademik Universitas Riau, dapat jawaban beserta sumbernya.</p>
         </div>
 
         <div className="card relative w-full max-w-xl overflow-hidden px-5 py-4 text-left">

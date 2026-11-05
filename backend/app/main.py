@@ -1,4 +1,4 @@
-"""Aplikasi FastAPI UNRI GPT. Jalankan: uvicorn app.main:app --reload"""
+"""Aplikasi FastAPI Balai Ilmu. Jalankan: uvicorn app.main:app --reload"""
 import logging
 from contextlib import asynccontextmanager
 
@@ -20,7 +20,7 @@ async def lifespan(_app: FastAPI):
     yield
 
 
-app = FastAPI(title="UNRI GPT API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="Balai Ilmu API", version="0.1.0", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=config.CORS_ORIGINS, allow_methods=["*"],
                    allow_headers=["*"])
 

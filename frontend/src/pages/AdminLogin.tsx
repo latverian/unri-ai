@@ -42,7 +42,7 @@ export default function AdminLogin() {
               <LogoMark size={56} />
               <div>
                 <h1 className="font-serif text-2xl font-semibold text-primary-strong">
-                  UNRI GPT <span className="label-caps ml-1 rounded bg-primary px-1.5 py-0.5 align-middle text-onprimary">Admin</span>
+                  Balai Ilmu <span className="label-caps ml-1 rounded bg-primary px-1.5 py-0.5 align-middle text-onprimary">Admin</span>
                 </h1>
                 <p className="mt-1 text-sm text-teks-2">Masuk untuk mengelola dokumen rujukan.</p>
               </div>

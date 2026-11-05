@@ -14,9 +14,9 @@ export function Wordmark({ subtitle = true }: { subtitle?: boolean }) {
   return (
     <span className="flex min-w-0 flex-col leading-tight">
       <span className="font-serif text-xl font-semibold text-primary-strong">
-        UNRI <span className="font-sans font-semibold text-emas-teks">GPT</span>
+        Balai <span className="text-emas-teks">Ilmu</span>
       </span>
-      {subtitle && <span className="truncate text-xs font-medium text-emas-teks">Balai Ilmu Akademik</span>}
+      {subtitle && <span className="truncate text-xs font-medium text-teks-2">Studi kasus UNRI</span>}
     </span>
   );
 }

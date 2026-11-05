@@ -19,7 +19,7 @@ export default function AdminLayout() {
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4">
           <LogoMark size={30} />
           <span className="mr-2 hidden font-serif text-lg font-semibold text-primary-strong sm:inline">
-            UNRI <span className="font-sans text-emas-teks">GPT</span> <span className="label-caps text-teks-2">Admin</span>
+            Balai <span className="text-emas-teks">Ilmu</span> <span className="label-caps text-teks-2">Admin</span>
           </span>
           <nav className="flex items-center gap-1" aria-label="Menu admin">
             <NavLink to="/admin" end className={link}><FileStack size={18} /> <span className="hidden sm:inline">Dokumen</span></NavLink>

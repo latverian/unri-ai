@@ -1,6 +1,6 @@
-# Requirements — UNRI GPT
+# Requirements — Balai Ilmu
 
-Dokumen ini menjabarkan **kebutuhan fungsional dan non-fungsional**, arsitektur, dan kontrak API untuk membangun UNRI GPT sebagai aplikasi web dengan **frontend** dan **backend** terpisah.
+Dokumen ini menjabarkan **kebutuhan fungsional dan non-fungsional**, arsitektur, dan kontrak API untuk membangun Balai Ilmu sebagai aplikasi web dengan **frontend** dan **backend** terpisah.
 
 - Latar belakang dan prioritas fitur: [`prd.md`](prd.md)
 - Tampilan dan gaya visual: [`design.md`](design.md)

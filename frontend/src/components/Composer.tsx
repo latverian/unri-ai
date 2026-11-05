@@ -57,7 +57,7 @@ export function Composer({ busy, onSend, onStop, prefill }: Props) {
         )}
       </div>
       <div className="mt-1.5 flex items-start justify-between gap-3 px-1 text-xs text-teks-2">
-        <span>Proyek mahasiswa, bukan layanan resmi Universitas Riau. Selalu konfirmasi ke bagian akademik.</span>
+        <span>Studi kasus Universitas Riau · proyek mahasiswa, bukan layanan resmi. Selalu konfirmasi ke bagian akademik.</span>
         {text.length > 800 && (
           <span className={`shrink-0 font-mono ${text.length > MAX ? "font-semibold text-error" : ""}`} aria-live="polite">
             {text.length}/{MAX}

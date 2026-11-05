@@ -1,8 +1,8 @@
-# PRD — UNRI GPT
+# PRD — Balai Ilmu
 
 | | |
 |---|---|
-| **Produk** | UNRI GPT: asisten akademik interaktif berbasis LLM untuk mahasiswa Universitas Riau |
+| **Produk** | Balai Ilmu: asisten akademik interaktif berbasis LLM, dengan **studi kasus Universitas Riau** |
 | **Versi dokumen** | 1.0 (draf) |
 | **Tanggal** | 4 November 2026 |
 | **Status** | Draf, untuk dibahas |
@@ -136,7 +136,7 @@ Mahasiswa membuka situs
 | LLM mengarang jawaban (halusinasi) | Mahasiswa salah mengambil keputusan | Ambang skor kemiripan, prompt "jawab hanya dari konteks", sitasi wajib, disclaimer |
 | Dokumen kedaluwarsa | Jawaban tidak lagi berlaku | Tampilkan tanggal unggah dokumen di kartu sumber; admin bisa mengganti dokumen dengan mudah |
 | Kuota free tier habis | Layanan mati saat demo | *Fallback* ke Ollama, *rate limit* per pengguna, cache jawaban untuk pertanyaan yang sering muncul |
-| Penggunaan nama dan identitas UNRI tanpa izin | Masalah etika atau hukum | Tidak memakai logo resmi; tampilkan label "proyek mahasiswa, bukan layanan resmi"; minta izin bila akan dipublikasikan luas |
+| Penggunaan nama dan identitas UNRI tanpa izin | Masalah etika atau hukum | Nama produk netral (Balai Ilmu), UNRI hanya disebut sebagai studi kasus; tidak memakai logo resmi; tampilkan label "proyek mahasiswa, bukan layanan resmi"; minta izin bila akan dipublikasikan luas |
 | Penyalahgunaan (spam atau *prompt injection*) | Biaya atau jawaban melenceng | *Rate limit*, batas panjang input, *system prompt* yang ketat, dokumen hanya dari admin |
 | PDF hasil scan tidak terbaca | Dokumen penting tidak masuk | Peringatan saat ingest; OCR di Rilis 3 |
 
