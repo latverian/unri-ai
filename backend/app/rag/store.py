@@ -47,7 +47,9 @@ class GeminiEmbedder:
                 headers={"x-goog-api-key": config.GEMINI_API_KEY}, timeout=120,
                 json={"requests": [{"model": f"models/{self.model}", "taskType": task,
                                     "content": {"parts": [{"text": t}]}} for t in batch]})
-            r.raise_for_status()
+            if not r.ok:
+                from app.rag.llm import google_error
+                raise RuntimeError(f"Embedding Gemini gagal: {google_error(requests.HTTPError(response=r))}")
             out += [e["values"] for e in r.json()["embeddings"]]
         return out
 

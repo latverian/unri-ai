@@ -13,6 +13,17 @@ class LLMError(Exception):
     pass
 
 
+def google_error(e: requests.RequestException) -> str:
+    """Ambil pesan error asli dari respons Google (mis. 'API key not valid')."""
+    resp = getattr(e, "response", None)
+    if resp is not None:
+        try:
+            return f"{resp.status_code} {resp.json()['error']['message']}"
+        except Exception:
+            return f"{resp.status_code} {resp.reason}"
+    return str(e)
+
+
 def stream_ollama(system: str, messages: list[dict]) -> Iterator[str]:
     try:
         r = requests.post(f"{config.OLLAMA_URL}/api/chat", stream=True, timeout=(5, 300), json={
@@ -50,7 +61,7 @@ def stream_gemini(system: str, messages: list[dict]) -> Iterator[str]:
                   "generationConfig": {"temperature": config.LLM_TEMPERATURE}})
         r.raise_for_status()
     except requests.RequestException as e:
-        raise LLMError(f"Gemini gagal: {e}") from e
+        raise LLMError(f"Gemini gagal: {google_error(e)}") from e
     with r:
         for line in r.iter_lines(decode_unicode=True):
             if not line or not line.startswith("data:"):
