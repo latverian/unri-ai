@@ -138,8 +138,9 @@ def try_llm(provider: str) -> bool:
             text += tok
     except llm.LLMError as e:
         print(f"  {FAIL} {provider}: {e}")
-        if provider == "gemini" and ("503" in str(e) or "429" in str(e)):
-            print("      → Server Gemini sedang sibuk atau kuota per menit habis (sementara).\n"
+        if provider == "gemini" and ("503" in str(e) or "429" in str(e) or "timed out" in str(e)):
+            print("      → Server Gemini sedang sibuk, lambat, atau kuota per menit habis (sementara).\n"
+                  "        Coba model lain dari daftar di atas (yang bernama 'lite' biasanya lebih cepat).\n"
                   "        Sudah dicoba ulang otomatis; tunggu 1–2 menit lalu jalankan lagi.\n"
                   "        Ollama sebagai LLM_FALLBACK membuat aplikasi tetap jalan saat ini terjadi.")
         if provider == "gemini" and "404" in str(e):
@@ -218,6 +219,17 @@ def main() -> int:
         print("\n== Gemini ==")
         if config.GEMINI_API_KEY:
             print(f"  {OK} GEMINI_API_KEY terisi (model {config.GEMINI_MODEL}).")
+            try:
+                r = requests.get(f"{llm.GEMINI_BASE}/models", params={"pageSize": 200},
+                                 headers={"x-goog-api-key": config.GEMINI_API_KEY}, timeout=10)
+                r.raise_for_status()
+                names = [m["name"].removeprefix("models/") for m in r.json().get("models", [])
+                         if "generateContent" in m.get("supportedGenerationMethods", [])]
+                print(f"  {OK} Model chat yang tersedia untuk key ini ({len(names)}), bisa dipakai di GEMINI_MODEL:")
+                for n in names[:30]:
+                    print(f"      - {n}{'   ← dipakai sekarang' if n == config.GEMINI_MODEL else ''}")
+            except requests.RequestException as e:
+                print(f"  {WARN} Daftar model Gemini tidak bisa diambil: {llm.google_error(e)}")
         else:
             print(f"  {WARN} GEMINI_API_KEY kosong. Ambil gratis di https://aistudio.google.com "
                   "lalu isi di backend/.env")

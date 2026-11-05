@@ -62,15 +62,16 @@ def stream_gemini(system: str, messages: list[dict], model: str | None = None) -
             r = requests.post(
                 f"{GEMINI_BASE}/models/{model or config.GEMINI_MODEL}:streamGenerateContent",
                 params={"alt": "sse"}, headers={"x-goog-api-key": config.GEMINI_API_KEY},
-                stream=True, timeout=(5, 120),
+                stream=True, timeout=(5, config.LLM_READ_TIMEOUT),
                 json={"systemInstruction": {"parts": [{"text": system}]}, "contents": contents,
                       "generationConfig": {"temperature": config.LLM_TEMPERATURE}})
             r.raise_for_status()
             break
         except requests.RequestException as e:
             status = getattr(getattr(e, "response", None), "status_code", None)
-            # Server sibuk / kuota per menit: tunggu sebentar lalu coba lagi. Error lain langsung dilaporkan.
-            if status in RETRY_STATUS and attempt < GEMINI_RETRIES:
+            transient = status in RETRY_STATUS or isinstance(e, (requests.Timeout, requests.ConnectionError))
+            # Server sibuk / kuota per menit / timeout: tunggu sebentar lalu coba lagi. Error lain langsung dilaporkan.
+            if transient and attempt < GEMINI_RETRIES:
                 time.sleep(RETRY_DELAYS[attempt])
                 continue
             raise LLMError(f"Gemini gagal: {google_error(e)}") from e
@@ -97,14 +98,15 @@ def stream_openai(system: str, messages: list[dict], model: str | None = None) -
     for attempt in range(GEMINI_RETRIES + 1):
         try:
             r = requests.post(f"{config.OPENAI_BASE_URL}/chat/completions", headers=headers, stream=True,
-                              timeout=(5, 180), json={
+                              timeout=(5, config.LLM_READ_TIMEOUT), json={
                                   "model": mdl, "stream": True, "temperature": config.LLM_TEMPERATURE,
                                   "messages": [{"role": "system", "content": system}, *messages]})
             r.raise_for_status()
             break
         except requests.RequestException as e:
             status = getattr(getattr(e, "response", None), "status_code", None)
-            if status in RETRY_STATUS and attempt < GEMINI_RETRIES:
+            transient = status in RETRY_STATUS or isinstance(e, (requests.Timeout, requests.ConnectionError))
+            if transient and attempt < GEMINI_RETRIES:
                 time.sleep(RETRY_DELAYS[attempt])
                 continue
             raise LLMError(f"Router ({config.OPENAI_BASE_URL}) gagal: {google_error(e)}") from e

@@ -32,6 +32,7 @@ MIN_SCORE = float(_env("MIN_SCORE", "0.75"))
 LLM_PROVIDER = _env("LLM_PROVIDER", "ollama")
 LLM_FALLBACK = _env("LLM_FALLBACK", "")
 LLM_TEMPERATURE = float(_env("LLM_TEMPERATURE", "0.1"))
+LLM_READ_TIMEOUT = int(_env("LLM_READ_TIMEOUT", "60"))  # detik menunggu potongan jawaban berikutnya
 OLLAMA_URL = _env("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_MODEL = _env("OLLAMA_MODEL", "qwen2.5:3b")
 GEMINI_API_KEY = _env("GEMINI_API_KEY")

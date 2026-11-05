@@ -249,3 +249,37 @@ def test_think_filter_strips_reasoning_across_chunks():
     assert out == "Dengan IPS 3,2\n\nboleh 24 SKS [1]. a < b"
     g = llm.ThinkFilter()  # tanpa blok think: spasi & baris baru utuh
     assert "".join(g.feed(c) for c in ["Halo", " ", "dunia", "\n\n", "- satu"]) + g.flush() == "Halo dunia\n\n- satu"
+
+
+def test_gemini_retries_on_timeout(monkeypatch):
+    import requests
+
+    from app.core import config
+
+    class Ok:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def iter_lines(self, decode_unicode=False):
+            return iter(['data: {"candidates":[{"content":{"parts":[{"text":"oke"}]}}]}'])
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    calls = []
+
+    def post(*a, **k):
+        calls.append(1)
+        if len(calls) == 1:
+            raise requests.ReadTimeout("Read timed out.")
+        return Ok()
+
+    monkeypatch.setattr(config, "GEMINI_API_KEY", "x")
+    monkeypatch.setattr(llm, "RETRY_DELAYS", (0, 0, 0))
+    monkeypatch.setattr(requests, "post", post)
+    assert "".join(llm.stream_gemini("sys", [])) == "oke" and len(calls) == 2
