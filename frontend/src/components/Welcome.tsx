@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { BookOpen, CalendarDays, Compass, GraduationCap, Medal, PauseCircle, ReceiptText, ScrollText } from "lucide-react";
 import { api } from "../lib/api";
 import { PANTUN } from "../lib/pantun";
+import { usePrefs } from "../lib/prefs";
 import { LogoMark } from "./Brand";
 
 const ICONS = [ScrollText, GraduationCap, PauseCircle, Medal, CalendarDays, ReceiptText];
 
 export function Welcome({ onPick }: { onPick: (q: string) => void }) {
+  const { prefs } = usePrefs();
   const [suggestions, setSuggestions] = useState<string[] | null>(null);
   useEffect(() => {
     api.suggestions().then((r) => setSuggestions(r.suggestions)).catch(() => setSuggestions([]));
@@ -14,7 +16,7 @@ export function Welcome({ onPick }: { onPick: (q: string) => void }) {
 
   return (
     <div className="relative">
-      <div className="pola-balai pointer-events-none absolute inset-x-0 top-0 h-[420px]" aria-hidden="true" />
+      {prefs.ornamen && <div className="pola-balai pointer-events-none absolute inset-x-0 top-0 h-[420px]" aria-hidden="true" />}
       <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 pb-6 pt-8 text-center md:pt-14">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-emas-soft px-3 py-1 text-emas-teks">
           <BookOpen size={14} /> <span className="label-caps">Studi kasus · Universitas Riau</span>
@@ -27,13 +29,13 @@ export function Welcome({ onPick }: { onPick: (q: string) => void }) {
           <p className="mx-auto max-w-xl text-teks-2">Tanya aturan akademik Universitas Riau, dapat jawaban beserta sumbernya.</p>
         </div>
 
-        <div className="card relative w-full max-w-xl overflow-hidden px-5 py-4 text-left">
+        {prefs.pantun && <div className="card relative w-full max-w-xl overflow-hidden px-5 py-4 text-left">
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-emas to-primary" aria-hidden="true" />
           <div className="label-caps mb-1 text-emas-teks">Pantun sambutan</div>
           <blockquote className="font-serif text-[17px] italic leading-relaxed text-teks">
             {PANTUN.sambutan.map((l) => <span key={l} className="block">{l}</span>)}
           </blockquote>
-        </div>
+        </div>}
 
         <section className="w-full text-left" aria-labelledby="saran-judul">
           <h2 id="saran-judul" className="mb-2 flex items-center gap-2 px-1 font-semibold">

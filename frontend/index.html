@@ -13,9 +13,12 @@
     <script>
       // Terapkan tema sebelum render supaya tidak berkedip.
       try {
-        var t = localStorage.getItem("unri-theme");
-        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
-        else if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.dataset.theme = "dark";
+        var p = JSON.parse(localStorage.getItem("unri-prefs") || "{}");
+        var t = p.theme || localStorage.getItem("unri-theme") || "system";
+        if (t === "system") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = t;
+        var size = { normal: 16, sedang: 18, besar: 20 }[p.textSize];
+        if (size) document.documentElement.style.setProperty("--answer-size", size + "px");
       } catch (e) {}
     </script>
   </head>

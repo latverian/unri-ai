@@ -1,3 +1,5 @@
+import { usePrefs } from "../lib/prefs";
+
 export function LogoMark({ size = 32, className = "" }: { size?: number; className?: string }) {
   // Ikon selembayung: dua garis bersilang di puncak atap rumah Melayu, titik emas = cahaya ilmu.
   return (
@@ -22,7 +24,9 @@ export function Wordmark({ subtitle = true }: { subtitle?: boolean }) {
 }
 
 /** Garis pucuk rebung (motif songket) sebagai pembatas. */
-export function PucukRebung({ className = "" }: { className?: string }) {
+export function PucukRebung({ className = "", force = false }: { className?: string; force?: boolean }) {
+  const { prefs } = usePrefs();
+  if (!prefs.ornamen && !force) return <div className="h-px w-full bg-garis" aria-hidden="true" />;
   return (
     <svg className={`block w-full ${className}`} height="8" aria-hidden="true" preserveAspectRatio="none">
       <defs>
@@ -37,6 +41,8 @@ export function PucukRebung({ className = "" }: { className?: string }) {
 }
 
 export function Pantun({ lines, className = "" }: { lines: string[]; className?: string }) {
+  const { prefs } = usePrefs();
+  if (!prefs.pantun) return null;
   return (
     <blockquote className={`font-serif italic leading-relaxed text-teks-2 ${className}`}>
       {lines.map((l) => <span key={l} className="block">{l}</span>)}

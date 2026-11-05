@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { History, LibraryBig, MessageSquare, Moon, Plus, Sun, Trash2, X } from "lucide-react";
+import { History, LibraryBig, MessageSquare, Plus, Settings, Trash2, X } from "lucide-react";
 import type { Conversation } from "../lib/types";
 import { LogoMark, Wordmark } from "./Brand";
 
@@ -78,13 +78,13 @@ export function Sidebar(p: Props) {
         </nav>
 
         <div className="space-y-1 border-t border-garis p-3">
-          <Link to="/admin" className="flex min-h-[40px] items-center gap-2 rounded-sm px-2 text-sm text-teks-2 hover:bg-surface hover:text-teks">
-            <LibraryBig size={18} /> Kelola Dokumen
+          <Link to="/pengaturan" className="flex min-h-[40px] items-center gap-2 rounded-sm px-2 text-sm text-teks-2 hover:bg-surface hover:text-teks">
+            <Settings size={18} /> Pengaturan
+            <span className="label-caps ml-auto rounded bg-emas-soft px-1.5 py-0.5 text-emas-teks">{p.theme === "dark" ? "Gelap" : "Terang"}</span>
           </Link>
-          <button onClick={p.onToggleTheme} className="flex min-h-[40px] w-full items-center gap-2 rounded-sm px-2 text-sm text-teks-2 hover:bg-surface hover:text-teks">
-            {p.theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            Mode {p.theme === "dark" ? "terang" : "gelap"}
-          </button>
+          <Link to="/admin" className="flex min-h-[40px] items-center gap-2 rounded-sm px-2 text-sm text-teks-2 hover:bg-surface hover:text-teks">
+            <LibraryBig size={18} /> Kelola Dokumen <span className="text-xs text-teks-2/80">(admin)</span>
+          </Link>
           {p.conversations.length > 0 && (
             <button onClick={clearAll} className="flex min-h-[40px] w-full items-center gap-2 rounded-sm px-2 text-sm text-teks-2 hover:bg-error-soft hover:text-error">
               <Trash2 size={18} /> Hapus riwayat

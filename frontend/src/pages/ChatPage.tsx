@@ -4,6 +4,7 @@ import { useChat } from "../lib/useChat";
 import { useTheme } from "../lib/theme";
 import { LogoMark, PucukRebung } from "../components/Brand";
 import { Sidebar } from "../components/Sidebar";
+import { AccountMenu } from "../components/AccountMenu";
 import { Welcome } from "../components/Welcome";
 import { Composer } from "../components/Composer";
 import { AssistantBubble, UserBubble } from "../components/MessageView";
@@ -51,7 +52,7 @@ export default function ChatPage() {
         onClearAll={chat.removeAll} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="shrink-0 bg-surface/90 backdrop-blur">
+        <header className="relative z-30 shrink-0 bg-surface/90 backdrop-blur">
           <div className="flex h-14 items-center gap-2 px-2 md:h-16 md:px-5">
             <button className="btn-icon lg:hidden" onClick={() => setDrawer(true)} aria-label="Buka menu"><Menu size={22} /></button>
             <div className="flex items-center gap-2 lg:hidden">
@@ -69,6 +70,7 @@ export default function ChatPage() {
                 title={theme === "dark" ? "Mode terang" : "Mode gelap"}>
                 {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
               </button>
+              <AccountMenu />
             </div>
           </div>
           <PucukRebung />

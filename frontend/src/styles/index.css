@@ -40,7 +40,7 @@
   .input { @apply w-full rounded-sm border border-garis bg-surface px-3 py-2.5 text-teks placeholder:text-teks-2/70 focus:border-primary-hover focus:outline-none; }
 
   /* Isi jawaban Markdown */
-  .prose-jawaban { @apply max-w-prose text-[16px] leading-[26px]; }
+  .prose-jawaban { @apply max-w-prose; font-size: var(--answer-size, 16px); line-height: 1.625; }
   .prose-jawaban > * + * { @apply mt-3; }
   .prose-jawaban strong { @apply font-semibold text-primary-strong; }
   .prose-jawaban ul { @apply list-disc space-y-1 pl-5; }
