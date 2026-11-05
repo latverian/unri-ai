@@ -49,7 +49,7 @@ function TypingIndicator({ phase }: { phase?: Message["phase"] }) {
   );
 }
 
-function SourceList({ sources, msgId, highlight }: { sources: Source[]; msgId: string; highlight: number | null }) {
+function SourceList({ sources, msgId, highlight }: { sources: (Source & { n: number })[]; msgId: string; highlight: number | null }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="mt-4 rounded-sm border border-garis bg-surface2/60">
@@ -62,13 +62,13 @@ function SourceList({ sources, msgId, highlight }: { sources: Source[]; msgId: s
       </button>
       {open && (
         <ol className="space-y-2 px-3 pb-3">
-          {sources.map((s, i) => {
+          {sources.map((s) => {
             const rel = relevance(s.score);
             return (
-              <li key={`${s.doc_id}-${i}`} id={`src-${msgId}-${i + 1}`}
-                className={`rounded-sm border-l-[3px] border-emas bg-surface px-3 py-2 transition-shadow ${highlight === i + 1 ? "ring-2 ring-emas" : ""}`}>
+              <li key={`${s.doc_id}-${s.n}`} id={`src-${msgId}-${s.n}`}
+                className={`rounded-sm border-l-[3px] border-emas bg-surface px-3 py-2 transition-shadow ${highlight === s.n ? "ring-2 ring-emas" : ""}`}>
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="rounded bg-emas-soft px-1.5 font-mono text-[11px] font-medium text-emas-teks">[{i + 1}]</span>
+                  <span className="rounded bg-emas-soft px-1.5 font-mono text-[11px] font-medium text-emas-teks">[{s.n}]</span>
                   <FileText size={14} className="shrink-0 text-teks-2" />
                   <span className="min-w-0 truncate font-medium" title={sourceLabel(s)}>{sourceLabel(s)}</span>
                   <span className="ml-auto flex shrink-0 gap-0.5" role="img" aria-label={`Relevansi ${rel} dari 3`} title={`Skor kemiripan ${s.score.toFixed(2)}`}>
@@ -102,6 +102,9 @@ export function AssistantBubble({ m, isLast, onRegenerate, onRated }: AssistantP
   const sources = m.sources ?? [];
   const notFound = m.status === "done" && m.found === false;
   const streaming = m.status === "streaming";
+  // Setelah selesai, tampilkan hanya sumber yang benar-benar dikutip (nomor aslinya dipertahankan).
+  const shown = sources.map((s, i) => ({ ...s, n: i + 1 }))
+    .filter((s) => !(m.status === "done" && m.cited) || m.cited.includes(s.n));
 
   const cite = (n: number) => {
     document.getElementById(`src-${m.id}-${n}`)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -176,12 +179,12 @@ export function AssistantBubble({ m, isLast, onRegenerate, onRated }: AssistantP
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-2 text-sm">
           <span className="font-serif font-semibold text-primary-strong">Balai Ilmu</span>
-          {sources.length > 0 && !streaming && <span className="label-caps rounded bg-emas-soft px-1.5 py-0.5 text-emas-teks">Berdasar dokumen</span>}
+          {shown.length > 0 && m.status === "done" && !notFound && <span className="label-caps rounded bg-emas-soft px-1.5 py-0.5 text-emas-teks">Berdasar dokumen</span>}
         </div>
         <div className={`card rounded-tl-[6px] px-4 py-3 ${accent}`}>
           {body}
-          {sources.length > 0 && m.status !== "error" && !(streaming && !m.content) && (
-            <SourceList sources={sources} msgId={m.id} highlight={highlight} />
+          {shown.length > 0 && m.status !== "error" && !notFound && !(streaming && !m.content) && (
+            <SourceList sources={shown} msgId={m.id} highlight={highlight} />
           )}
         </div>
 

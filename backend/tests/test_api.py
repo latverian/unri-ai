@@ -152,3 +152,13 @@ def test_check_recommendation():
     assert recommend(8, None)[0] == "gemini"
     assert recommend(16, None) == ("ollama", recommend(16, None)[1]) and "3b" in recommend(16, None)[1]
     assert "7b" in recommend(32, "Apple Silicon")[1]
+
+
+def test_refusal_without_citation_is_not_found(client, auth, monkeypatch):
+    doc_id = upload(client, auth, "pedoman3.md", SAMPLE.encode())
+    wait_ready(client, auth, doc_id)
+    monkeypatch.setitem(llm.PROVIDERS, "ollama", lambda s, m: iter(["Maaf, informasi UKT belum ada di dokumen."]))
+    events = parse_sse(client.post("/api/chat", json={"message": "Berapa SKS maksimal kalau IPS saya 3,2?"}).text)
+    done = events[-1][1]
+    assert events[0][1]["sources"] and done["found"] is False and done["cited"] == []
+    client.delete(f"/api/admin/documents/{doc_id}", headers=auth)

@@ -41,7 +41,7 @@ export function useChat() {
     streamChat({ message: question, history, conversation_id: convId }, {
       onSources: (sources) => patch((m) => ({ ...m, sources, phase: "writing" })),
       onToken: (t) => patch((m) => ({ ...m, content: m.content + t })),
-      onDone: (d) => patch((m) => ({ ...m, status: "done", messageId: d.message_id, found: d.found })),
+      onDone: (d) => patch((m) => ({ ...m, status: "done", messageId: d.message_id, found: d.found, cited: d.cited })),
       onError: (error) => patch((m) => ({ ...m, status: "error", error })),
     }, ctrl.signal);
   }, [patchMessage]);

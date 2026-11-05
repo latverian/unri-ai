@@ -77,12 +77,18 @@ def chat(req: ChatRequest):
             log.exception("chat gagal")
             yield sse("error", {"code": "INTERNAL", "message": "Terjadi kesalahan. Coba lagi sebentar ya."})
             return
+        # Jawaban dianggap "ditemukan" hanya jika LLM benar-benar mengutip sumber [n].
+        # Kalau LLM menolak menjawab meski ada konteks, pertanyaan ini ikut tercatat di Insights.
+        cited = sorted({int(n) for n in re.findall(r"\[(\d{1,2})\]", answer) if 1 <= int(n) <= len(sources)})
+        if found and not cited:
+            found = False
         latency = int((time.monotonic() - t0) * 1000)
         try:
-            db.save_message(message_id, req.conversation_id, req.message, answer, found, latency, sources)
+            used = [s for i, s in enumerate(sources, start=1) if i in cited]
+            db.save_message(message_id, req.conversation_id, req.message, answer, found, latency, used)
         except Exception:
             log.exception("gagal menyimpan pesan")
-        yield sse("done", {"message_id": message_id, "found": found, "latency_ms": latency})
+        yield sse("done", {"message_id": message_id, "found": found, "cited": cited, "latency_ms": latency})
 
     return StreamingResponse(events(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})

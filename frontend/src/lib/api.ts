@@ -61,7 +61,7 @@ export type Insights = {
 export type ChatHandlers = {
   onSources: (s: Source[]) => void;
   onToken: (t: string) => void;
-  onDone: (d: { message_id: string; found: boolean; latency_ms: number }) => void;
+  onDone: (d: { message_id: string; found: boolean; cited?: number[]; latency_ms: number }) => void;
   onError: (message: string) => void;
 };
 

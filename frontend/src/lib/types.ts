@@ -7,6 +7,7 @@ export type Message = {
   sources?: Source[];
   messageId?: string; // id dari backend, untuk feedback
   found?: boolean;
+  cited?: number[]; // nomor sumber yang benar-benar dikutip jawaban
   status?: "streaming" | "done" | "error" | "stopped";
   phase?: "searching" | "writing";
   error?: string;
