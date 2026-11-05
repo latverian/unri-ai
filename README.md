@@ -138,6 +138,11 @@ LLM_MODELS=openai:nama-model-1=Label 1,openai:nama-model-2=Label 2,gemini:gemini
 
 Semua model di `LLM_MODELS` muncul di **pemilih model** pada header chat. Nama model harus persis sama dengan daftar model di router. Cek dengan `python -m app.check`.
 
+**Contoh dengan [9router](https://github.com/decolua/9router)** (router lokal yang dijalankan di laptop sendiri):
+1. Jalankan 9router sesuai README-nya, lalu buka dashboard di `http://localhost:20128/dashboard` dan sambungkan provider yang ingin dipakai.
+2. Isi `backend/.env`: `OPENAI_BASE_URL=http://localhost:20128/v1`, `LLM_PROVIDER=openai`, dan `OPENAI_API_KEY` dari dashboard 9router (jika diwajibkan).
+3. Jalankan `python -m app.check` untuk melihat nama model yang tersedia (formatnya `provider/model`), lalu salin ke `OPENAI_MODEL` dan `LLM_MODELS`.
+
 ## Pengaturan Penting (`backend/.env`)
 
 | Variabel | Fungsi |

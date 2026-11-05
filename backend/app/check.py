@@ -201,6 +201,18 @@ def main() -> int:
         print("\n== Router (format OpenAI) ==")
         print(f"  {OK if config.OPENAI_API_KEY else WARN} {config.OPENAI_BASE_URL} · "
               f"API key {'terisi' if config.OPENAI_API_KEY else 'kosong'} · model default {config.OPENAI_MODEL or '-'}")
+        try:
+            headers = {"Authorization": f"Bearer {config.OPENAI_API_KEY}"} if config.OPENAI_API_KEY else {}
+            r = requests.get(f"{config.OPENAI_BASE_URL}/models", headers=headers, timeout=10)
+            r.raise_for_status()
+            ids = [m.get("id") for m in r.json().get("data", []) if m.get("id")]
+            print(f"  {OK} Router menyediakan {len(ids)} model. Contoh nama untuk OPENAI_MODEL / LLM_MODELS:")
+            for mid in ids[:25]:
+                print(f"      - {mid}")
+            if len(ids) > 25:
+                print(f"      … dan {len(ids) - 25} lainnya")
+        except requests.RequestException as e:
+            print(f"  {FAIL} Daftar model router tidak bisa diambil: {llm.google_error(e)}")
         used = list(dict.fromkeys(used + ["openai"]))
     if "gemini" in used or rec == "gemini":
         print("\n== Gemini ==")
