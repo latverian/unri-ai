@@ -86,7 +86,7 @@ Prioritas memakai metode **MoSCoW**: **M** = Must, **S** = Should, **C** = Could
 ### 🟢 Rilis 1: MVP (target 4 minggu)
 - Halaman chat dengan *streaming*, sitasi sumber, dan penolakan jawaban jika info tidak ditemukan (US-01 s.d. US-06).
 - Contoh pertanyaan di layar awal.
-- Backend API (FastAPI) yang membungkus pipeline RAG yang sudah ada.
+- Backend API (FastAPI) dengan pipeline RAG: ingest dokumen, pencarian, dan pemanggilan LLM.
 - Halaman admin sederhana: login, unggah, hapus, dan daftar dokumen (US-13, US-14).
 - Tema hijau UNRI dengan nuansa Melayu, responsif untuk HP.
 

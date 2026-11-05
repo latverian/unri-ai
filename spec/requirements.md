@@ -1,6 +1,6 @@
 # Requirements — UNRI GPT
 
-Dokumen ini menjabarkan **kebutuhan fungsional dan non-fungsional**, arsitektur, dan kontrak API untuk mengubah UNRI GPT dari prototipe Streamlit menjadi aplikasi web dengan **frontend** dan **backend** terpisah.
+Dokumen ini menjabarkan **kebutuhan fungsional dan non-fungsional**, arsitektur, dan kontrak API untuk membangun UNRI GPT sebagai aplikasi web dengan **frontend** dan **backend** terpisah.
 
 - Latar belakang dan prioritas fitur: [`prd.md`](prd.md)
 - Tampilan dan gaya visual: [`design.md`](design.md)
@@ -28,7 +28,7 @@ Dokumen ini menjabarkan **kebutuhan fungsional dan non-fungsional**, arsitektur,
                                                        └───────────────────────────────┘
 ```
 
-Backend **memakai ulang** modul yang sudah ada (`config.py`, `store.py`, `ingest.py`, `rag.py`) dan menambahkan lapisan API di atasnya.
+Pipeline RAG ditempatkan di modul tersendiri (`backend/app/rag/`) supaya bisa diuji terpisah dari lapisan API, dan nantinya bisa dipakai juga oleh klien lain seperti bot Telegram.
 
 ## 2. Teknologi (semua gratis / open-source)
 
@@ -39,10 +39,10 @@ Backend **memakai ulang** modul yang sudah ada (`config.py`, `store.py`, `ingest
 | Render Markdown | `react-markdown` + `remark-gfm` | Jawaban LLM berformat Markdown (daftar, tabel) |
 | Ikon | `lucide-react` | Gratis, gaya garis yang bersih |
 | Backend | **FastAPI** + Uvicorn | Async, mendukung streaming, dokumentasi otomatis di `/docs` |
-| Vector DB | Chroma (sudah ada) | Lokal, berbasis file |
+| Vector DB | Chroma | Lokal, berbasis file |
 | Database metadata | **SQLite** via SQLModel | Tanpa server; cukup untuk skala project |
-| Embedding | `intfloat/multilingual-e5-small` (sudah ada) | Lokal, bagus untuk bahasa Indonesia |
-| LLM | Ollama (`qwen2.5:3b`) / Gemini free tier (sudah ada) | Gratis |
+| Embedding | `intfloat/multilingual-e5-small` | Lokal, bagus untuk bahasa Indonesia |
+| LLM | Ollama (`qwen2.5:3b`) / Gemini free tier | Gratis |
 | Auth admin | JWT (`python-jose`) + password di-hash (`passlib[bcrypt]`) | Sederhana |
 | Deploy (opsional) | Frontend: Vercel/Netlify · Backend: Hugging Face Spaces (Docker) | Free tier |
 
@@ -59,7 +59,7 @@ unri-ai/
 │   │   │   ├── feedback.py    # /api/feedback
 │   │   │   └── admin.py       # /api/admin/*
 │   │   ├── core/              # config.py, security.py (JWT), rate_limit.py
-│   │   ├── rag/               # store.py, ingest.py, rag.py (dipindah dari root)
+│   │   ├── rag/               # store.py (embedding + Chroma), ingest.py, rag.py
 │   │   └── db.py              # model SQLite
 │   ├── data/                  # docs/, chroma/, app.db  (di-.gitignore kecuali contoh)
 │   ├── tests/
@@ -74,10 +74,9 @@ unri-ai/
 │   ├── public/
 │   └── package.json
 ├── eval/
-├── prd.md · requirements.md · design.md · README.md
+├── spec/                    # prd.md, requirements.md, design.md
+└── README.md
 ```
-
-Prototipe Streamlit (`app.py`) tetap dipertahankan sampai frontend baru selesai.
 
 ## 4. Kebutuhan Fungsional
 
@@ -103,7 +102,7 @@ Prototipe Streamlit (`app.py`) tetap dipertahankan sampai frontend baru selesai.
 | FR-21 | Unggah dokumen **PDF/TXT/MD**, maksimal **20 MB per file**, bisa beberapa file sekaligus. | M |
 | FR-22 | Dokumen yang diunggah diproses (ingest) **di latar belakang**; statusnya `queued → processing → ready / failed`. | S |
 | FR-23 | Daftar dokumen: nama, ukuran, jumlah halaman, jumlah chunk, tanggal unggah, dan status. | M |
-| FR-24 | Hapus dokumen, sekaligus menghapus semua chunk-nya dari Chroma. Ingest **per dokumen**, bukan reset seluruh koleksi seperti `ingest.py` saat ini. | M |
+| FR-24 | Hapus dokumen, sekaligus menghapus semua chunk-nya dari Chroma. Ingest dilakukan **per dokumen**, tanpa mereset seluruh koleksi. | M |
 | FR-25 | Peringatan jika PDF tidak mengandung teks (kemungkinan hasil scan). | S |
 | FR-26 | Halaman *Insights*: daftar pertanyaan yang tidak terjawab dan yang diberi 👎, bisa difilter per tanggal. | S |
 | FR-27 | Admin dapat mengatur contoh pertanyaan yang tampil di layar awal. | C |
@@ -223,12 +222,12 @@ JWT_SECRET=                    # string acak panjang
 ```
 Frontend: `VITE_API_URL=http://localhost:8000`.
 
-## 9. Perubahan yang Diperlukan pada Kode Saat Ini
+## 9. Modul RAG yang Perlu Dibuat
 
-1. **`rag.py`**: tambahkan versi streaming (`answer_stream()`) yang menghasilkan token dari Ollama (`"stream": true`) atau Gemini (`:streamGenerateContent?alt=sse`).
-2. **`ingest.py`**: pisahkan menjadi `ingest_file(path, doc_id)` dan `delete_doc(doc_id)`; jangan reset seluruh koleksi.
-3. **`store.py`**: simpan `doc_id` di metadata chunk; tambahkan `count()`.
-4. Pindahkan modul RAG ke `backend/app/rag/` dan perbarui import.
+1. **`store.py`**: embedding dengan model e5 (awalan `query:` / `passage:`), penyimpanan ke Chroma dengan `doc_id` di metadata setiap chunk, `search(query, k)`, dan `count()`.
+2. **`ingest.py`**: `ingest_file(path, doc_id)` untuk membaca PDF/TXT/MD, membersihkan teks, memotong per paragraf dengan overlap, lalu menyimpan; serta `delete_doc(doc_id)`.
+3. **`rag.py`**: `answer_stream(question, history)` yang menyaring hasil pencarian dengan `MIN_SCORE`, menyusun prompt beserta konteks, lalu menghasilkan token dari Ollama (`"stream": true`) atau Gemini (`:streamGenerateContent?alt=sse`).
+4. **`eval/evaluate.py`**: menghitung akurasi retrieval dan jawaban dari `eval/questions.csv` (lihat target di `prd.md` §8).
 
 ## 10. Kriteria Penerimaan MVP
 
