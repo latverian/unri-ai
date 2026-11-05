@@ -136,6 +136,9 @@ def try_llm(provider: str) -> bool:
             text += tok
     except llm.LLMError as e:
         print(f"  {FAIL} {provider}: {e}")
+        if provider == "gemini" and "404" in str(e):
+            print(f"      → Model {config.GEMINI_MODEL} tidak tersedia. Ganti GEMINI_MODEL di backend/.env "
+                  "dengan nama model yang disarankan pada pesan di atas.")
         return False
     total = time.monotonic() - t0
     print(f"  {OK} {provider} menjawab dalam {total:.1f} dtk (token pertama {first - t0:.1f} dtk):")

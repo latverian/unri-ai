@@ -35,7 +35,7 @@ LLM_TEMPERATURE = float(_env("LLM_TEMPERATURE", "0.1"))
 OLLAMA_URL = _env("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_MODEL = _env("OLLAMA_MODEL", "qwen2.5:3b")
 GEMINI_API_KEY = _env("GEMINI_API_KEY")
-GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-3.8-flash")
 
 MAX_MESSAGE_CHARS = int(_env("MAX_MESSAGE_CHARS", "1000"))
 MAX_HISTORY = int(_env("MAX_HISTORY", "6"))
